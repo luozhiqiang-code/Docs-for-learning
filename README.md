@@ -693,9 +693,34 @@ ES6的作用域：
 
 **怪癖检测**：有些浏览器版本有自己的bug，一般只有某种怪癖干扰到JS脚本的执行才使用。
 
+### 18. Array的方法
 
+1. slice
+2. splice
+3. split
+4. sort
+5. join
+6. push
+7. pop
+8. shift
+9. unshift
+10. some
+11. forEach
+12. reduce
+13. map
+14. filter
+15. concat
+16. indexOf
+17. includes
+18. find
+19. findIndex
+20. has
+21. every
+22. fill
+23. flat
+24. reverse
 
-
+### 19. 
 
 
 
@@ -885,7 +910,7 @@ cache-control
 
 #### 协商缓存
 
-if-modified-since、last-modefied
+if-modified-since（请求）、last-modefied（响应）
 
 值为本地文件的最后修改日期。
 
@@ -894,7 +919,7 @@ if-modified-since、last-modefied
 1. 如果服务器打开了文件并没有修改，也会导致last-modefied被修改，缓存失效。
 2. 因为last-modefied是以秒为单位的，如果修改的实际为毫秒，则last-modefied不会改变，新的缓存不会起作用。
 
-if-none-match、e-tag
+if-none-match（请求）、e-tag（响应）
 
 值为文件的哈希值，类似文件指纹。优先级更高。
 
@@ -1266,6 +1291,94 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 4. `get`请求在`url`中`传递的参数有大小限制，基本是`2kb`，不同的浏览器略有不同。而post没有注意。
 5. `get`的参数是直接暴露在`url`上的，相对不安全。而`post`是放在请求体中的。
 
+### 2. 常见的状态码：
+
+**200：**
+
+- 200：请求成功，返回资源；
+- 204：请求成功，但不返回资源；
+- 206：请求成功，根据请求数据大小返回部分资源；
+
+**300：**
+
+- 301：永久重定向，浏览器会有一些反应，比如修改书签地址。
+- 302：零时重定向，不修改书签。
+- 303：临时重定向，下次请求得用get。
+- 304：非重定向，表示请求到资源但是不满足条件，例如协商缓存未过期。
+
+**400：**
+
+- 400：请求报文存在语法错误。
+- 401：发送的请求需要经过HTTP认证，或者认证失败（比如cookie跨域）。
+- 403：发送的请求被服务器拒绝，比如资源目录访问权限问题。
+- 404：服务器找不到请求的资源，例如SQL查库失败。
+
+### 3. HTTP报文
+
+#### **HTTP报文组成**
+
+起始行、headers、主体
+
+![image-20220718221708135](images/image-20220718221708135.png)
+
+#### **headers**
+
+**通用header：**
+
+- **Date**
+-  **Connection**
+- MIME-Version
+- Update
+- **Cache-Control**
+
+**请求header：**
+
+- 请求信息header
+  - Client-IP
+  - **Host**
+  - **UA-Color、UA-CPU、UA-Disp、UA-OS、UA-Pixels、**
+  - **User-Agent**
+- Accept header
+  - **Accept、Accept-Charset、Accept-Encoding、Accept-Language**
+- 条件请求 header
+  - **If-Match、If-Modified-Since、If-None-Match、If-Range、Range**
+- 安全请求 header
+  - **Authorization**
+  - **Cookie**
+- 代理请求header
+  - Proxy-Autorization
+  - Proxy-Connection
+
+响应header：
+
+- 响应信息header
+  - **Age**
+  - **Public**
+  - **Server**
+  - **Title**
+- 协商header
+  - **Accept-Ranges**
+  - Vary
+- 安全响应header
+  - **Set-Cookie**
+- 
+
+实体header：
+
+- 实体信息header
+  - Allow
+  - Location
+- 内容header
+  - **Content-Base、Encoding、Language、Length、Loacation、Range、Type**
+- 实体缓存header
+  - **Etag**
+  - **Expires**
+  - **Last-Modified**
+
+
+
+
+
 ## React
 
 ### 1. 虚拟DOM
@@ -1445,11 +1558,11 @@ React使用双缓存技术来实现更新逻辑，就行canvas绘制动画的双
 重构响应式系统，使用Proxy替换Object.defineProperty，使用Proxy优势：
 
 - 可直接监听数组类型的数据变化
-- 监听的目标为对象本身，不需要像`Object.defineProperty`一样遍历每个属性，有一定的性能提升
+- 监听的目标为对象本身（惰性拦截），不需要像`Object.defineProperty`一样遍历每个属性，有一定的性能提升
 - 可拦截`apply、ownKeys、has`等13种方法，而`Object.defineProperty`不行
 - 直接实现对象属性的新增/删除
 
-新增`Composition API`，更好的逻辑复用和代码组织
+新增`Composition API`，更好的逻辑复用和代码组织。原来是配置型API，主要是将相同类型的属性和方法放到同一个对象中配置，而组合式API根据组件的功能逻辑来封装代码，使得代码逻辑更清晰，复用性更强。就好比React中类组件的生命周期和hooks实现声明周期。
 
 重构 Virtual DOM
 
@@ -1460,6 +1573,37 @@ React使用双缓存技术来实现更新逻辑，就行canvas绘制动画的双
 代码结构调整，更便于Tree shaking，使得体积更小
 
 使用Typescript替换Flow
+
+### 2. Vue3和Vue2响应式区别
+
+**Vue2响应式缺点：**
+
+- 新增属性和删除属性，Object.defineProperty不能检测。
+- 直接通过下标修改数组Object.defineProperty不能检测。
+- Object.defineProperty需要遍历所有的属性然后劫持属性，效率低。
+
+**Vue3响应式原理：**
+
+- 通过Proxy拦截对象中任意属性的变化（读写、增删）。
+- 通过Reflect对源对象的属性进行操作（Reflect的返回值表示操作是否成功，可以代替错误捕捉）。
+
+```javascript
+new Proxy(data，{
+//拦截读取属性值
+    get (target，prop) {
+return Reflect.get(target,prop)},
+//拦截设置属性值或添加新属性
+    set (target,prop, value) {
+return Reflect.set(target, prop, value)},
+//拦截删除属性
+    deleteProperty (target, prop) {
+return Reflect.deleteProperty(target， prop)
+}
+})
+proxy.name = 'tom'
+```
+
+
 
 ## 项目1：播放器
 
@@ -1610,6 +1754,286 @@ React使用双缓存技术来实现更新逻辑，就行canvas绘制动画的双
 歌词滚动逻辑：
 
 通过歌词解析器可以获得歌词行数组、歌词行下标。然后再播发器组件内设置state和Ref来保存需要用的数据。然后在effect hooks函数里面获取歌词数据初始化歌词解析器并且初始化state和Ref。然后在歌词区域遍历歌词数组渲染出多个p元素作为歌词行，每个p元素class根据是否为currentIndex设置active。然后css样式设置一下active的歌词行突出显示。并且给组件effect hooks设置一个滚动歌词的任务，加入我想让当前行位于中间，中间是第9行，则设置当CurrentLineNum>9的时候获取当前行减去-9的下标的歌词行DOM，然后滚动到这个位置。否则就滚动到坐标（0,0），设置currentLIneNum为依赖数组的元素。
+
+## 移动端开发
+
+## 1 移动端适配
+
+**为什么要做适配**
+
+- 为了适应各种移动端设备，完美呈现应有的布局效果
+- 各个移动端设备，分辨率大小不一致，网页想铺满整个屏幕，并在各种分辨下等比缩放
+
+###  适配方案
+
+- 固定高度，宽度百分比适配-布局非常均匀，适合百分比布局
+- 固定宽度，改变缩放比例适配-什么情况都可以
+- Rem适配
+- 像素比适配
+
+**单位**
+
+- `em`根据元素自身的字体大小计算,元素自身 `16px 1em=16px`
+- `Rem R -> root` 根节点( html ) 根据html的字体大小计算其他元素尺寸
+
+**百分比适配**
+
+> 固定高度，宽度百分比适配
+
+- 根据设置的大小去设置高度，单位可以用px 百分比 auto
+- 常用Flex布局
+- 百分比宽度
+
+> 以640设计稿为例，在外层容器上设置最大以及最小的宽
+
+```css
+#wrapper {
+    max-width: 640px; /*设置设计稿的宽度*/
+    min-width: 300px;
+    margin: 0 auto;
+}
+```
+
+> 后面的区块布局都用百分比，具体元素大小用`px`计算
+
+**Rem适配(常用)**
+
+- 根据屏幕的分辨率动态设置`html`的文字大小，达到等比缩放的功能
+- 保证`html`最终算出来的字体大小，不能小于`12px`
+- 在不同的移动端显示不同的元素比例效果
+- 如果`html`的`font-size:20px`的时候，那么此时的`1rem = 20px`
+- 把设计图的宽度分成多少分之一，根据实际情况
+- `rem`做盒子的宽度，`viewport`缩放
+
+> `head`加入常见的`meta`属性
+
+```html
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<!--这个是关键-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0，minimum-scale=1.0">
+```
+
+> 把这段代码加入`head`中的`script`预先加载
+
+```js
+// rem适配用这段代码动态计算html的font-size大小
+(function(win) {
+    var docEl = win.document.documentElement;
+    var timer = '';
+
+    function changeRem() {
+        var width = docEl.getBoundingClientRect().width;
+        if (width > 750) { // 750是设计稿大小
+            width = 750;
+        }
+        var fontS = width / 10; // 把设备宽度十等分 1rem=10px
+        docEl.style.fontSize = fontS + "px";
+    }
+    win.addEventListener("resize", function() {
+        clearTimeout(timer);
+        timer = setTimeout(changeRem, 30);
+    }, false);
+    win.addEventListener("pageshow", function(e) {
+        if (e.persisted) { //清除缓存
+            clearTimeout(timer);
+            timer = setTimeout(changeRem, 30);
+        }
+    }, false);
+    changeRem();
+})(window)
+```
+
+**像素比适配**
+
+- `window.devicePixelRatio`
+- 物理像素是手机屏幕分辨率
+- 独立像素 指`css`像素 屏幕宽度
+- 像素比 = 物理像素 / `css`宽度
+- 获取设备的像素比 `window.devicePixelRatio`
+
+## 2 移动端300ms延迟
+
+> 由来：300毫米延迟解决的是双击缩放。双击缩放，手指在屏幕快速点击两次。safari浏览器就会将网页缩放值原始比例。由于用户可以双击缩放或者是滚动的操作， 当用户点击屏幕一次之后，浏览器并不会判断用户确实要打开至这个链接，还是想要进行双击操作 因此，safair浏览器就会等待300ms，用来判断用户是否在次点击了屏幕
+
+**解决方案**：
+
+1. 禁用缩放，设置meta标签 `user-scalable=no`
+2. `fastclick.js`
+
+> 原理：FastClick的实现原理是在检查到touchend事件的时候，会通过dom自定义事件立即发出click事件，并把浏览器在300ms之后真正的click事件阻止掉。fastclick.js还可以解决穿透问题
+
+- fastclick可以解决在手机上点击事件的300ms延迟
+- zepto的touch模块，tap事件也是为了解决在click的延迟问题
+
+**触摸事件的响应顺序**
+
+- `ontouchstart`
+- `ontouchmove`
+- `ontouchend`
+- `onclick`
+
+## 3 如何解决移动端 Retina 屏 1px 像素问题
+
+- `伪元素 + transform scaleY(.5)`
+- `border-image`
+- `background-image`
+- `box-shadow`
+
+> 一般来说，在PC端浏览器中，设备像素比（dpr）等于1，1个css像素就代表1个物理像素；但是在`retina`屏幕中，dpr普遍是2或3，1个css像素不再等于1个物理像素，因此比实际设计稿看起来粗不少
+
+1. 伪元素+scale
+
+```html
+<style>
+    .box{
+        width: 100%;
+        height: 1px;
+        margin: 20px 0;
+        position: relative;
+    }
+    .box::after{
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        transform: scaleY(0.5);
+        transform-origin: 0 0; 
+        background: red;
+    }
+</style>
+
+<div class="box"></div>
+```
+
+1. border-image
+
+```css
+div{
+    border-width: 1px 0px;
+    -webkit-border-image: url(border.png) 2 0 stretch;
+    border-image: url(border.png) 2 0 stretch;
+}
+```
+
+## 4 如何解决移动端击穿（穿透）问题
+
+> 在移动端开发的时候，我们有时候会遇到这样一个bug：点击关闭遮罩层的时候，遮罩层下面的带有点击的元素也会被触发，给人一种击穿了页面的感觉，这是为什么呢？
+
+- 点击“打开弹框”按钮，显示遮罩层
+- 点击“关闭弹框”按钮，遮罩层消失，底下的连接被触发
+
+![img](https://s.poetries.work/gitee/2020/03/3.png)
+
+上图事例js部分代码
+
+```js
+var show = document.getElementById('show') // 打开按钮
+var mask = document.getElementById('mask') // 遮罩层
+var btn = document.getElementById('btn')   // 关闭按钮
+
+show.onclick = function () {
+    mask.style.display = 'block'
+}
+
+btn.addEventListener('touchstart', function () {
+    mask.style.display = 'none'
+}, false)
+```
+
+- 这样问题的形成原因是什么呢？
+- 我们先来看一段代码：(以下代码需在移动端上运行)
+
+```js
+<div id="btn">我是一个按钮</div>
+var btn = document.getElementById('btn')
+btn.addEventListener('touchstart', function () {
+    console.log('start')    
+}, false)
+
+btn.addEventListener('touchmove', function () {
+    console.log('move')
+}, false)
+
+btn.addEventListener('touchend', function () {
+    console.log('touchend')
+}, false)
+
+btn.addEventListener('click', function () {
+    console.log('click')
+}, false)
+```
+
+> 以上代码会出现2种运行情况
+
+```text
+start ===> move ===> end
+start ===> end ===> click
+```
+
+> 看到这里相信大家都明白了，由于「关闭弹框」按钮绑定的事件是`touch`，a标签是`click`事件，在`touch`事件触发后，我们弹出框的遮罩层就消失了，这时候的`click`事件就被a标签给捕获到了，形成了击穿的效果
+
+**方法一、阻止默认事件**
+
+```js
+btn.addEventListener('touchend', function (e) {
+    mask.style.display = 'none'
+    e.preventDefault()
+}, false)
+```
+
+> 在执行 touchstart 和 touchend 事件时，隐藏执行完隐藏命令后，立即阻止后续事件(推荐在touchend时，阻止后续的默认事件)
+
+**方法二、统一使用click事件**
+
+```js
+btn.addEventListener('click', function () {
+    mask.style.display = 'none'
+}, false)
+```
+
+> 这个方法简单，就是交互的效率没有`click`事件高，另外，用户在`touch`的时候，有可能微微滑动了一下，就会无法触发点击事件。影响用户体验。
+
+**方法三、延迟执行**
+
+```js
+btn.addEventListener('touchend', function () {
+    setTimeout(function () {
+        mask.style.display = 'none'  // 可以使用fadeOut动画
+    }, 300)
+}, false)
+```
+
+> 点击之后，我们不立即隐藏。让遮罩在350ms毫秒内淡出消失。（我为了演示方便就没有添加动画了，采用了定时器方法。）
+
+**方法四、 css属性pointer-events**
+
+```js
+click.setAttribute('style', 'pointer-events:none')
+mask.style.display = 'none'
+setTimeout(function () {
+    click.setAttribute('style', 'pointer-events:auto')
+}, 350)
+```
+
+> 这样做法是，在遮罩消失之前，先让a标签忽略点击事件，这样遮罩层的点击事件，就不会被a标签捕获到。还是等350毫秒之后，再次赋予a标签的点击能力。这个方法跟方法三原理相似，只是利用了不同的css属性而已。个人觉得方法三比较好一点。方法四有明显的2个缺点：
+
+- 遮罩层下面可能有多个带有事件的元素，那么你需要给所有可点击元素添加`pointer-events`属性 然后删除。不仅容易出错，还影响性能
+- 如果用户在`350`毫秒内点击了元素，会造成页面失效的错觉，影响体验。
+
+**方法五、fastClick库**
+
+> 这个库的引用方法，在我上一篇文章中已经讲到。fastClick的原理就是使用了方法一的做法。fastClick 在 touchend 阶段 调用 event.preventDefault，然后通过 document.createEvent 创建一个  MouseEvents，然后 通过 `eventTarget.dispatchEvent` 触发对应目标元素上绑定的 click 事件
+
+##  5 移动端的兼容问题
+
+- 给移动端添加点击事件会有300S的延迟 如果用点击事件，需要引一个`fastclick.js`文件，解决`300s`的延迟 一般在移动端用`ontouchstart`、`ontouchmove`、`ontouchend`
+- 移动端点透问题,`touchstart` 早于 `touchend` 早于`click`,`click`的触发是有延迟的，这个时间大概在`300ms`左右，也就是说我们`tap`触发之后蒙层隐藏， 此时 `click`还没有触发，300ms之后由于蒙层隐藏，我们的click触发到了下面的a链接上尽量都使用`touch`事件来替换`click`事件。例如用touchend事件(推荐)。用`fastclick`，`github.com/ftlabs/fast…`用`preventDefault`阻止`a`标签的`click`消除 `IE10` 里面的那个叉号`input:-ms-clear{display:none;}`
+- 设置缓存 手机页面通常在第一次加载后会进行缓存，然后每次刷新会使用缓存而不是去重新向服务器发送请求。如果不希望使用缓存可以设置`no-cache`。
+- 圆角`BUG` 某些Android手机圆角失效 b`ackground-clip: padding-box;` 防止手机中网页放大和缩小 这点是最基本的，做为手机网站开发者来说应该都知道的，就是设置`meta`中的`viewport`
+- 设置用户截止缩放，一般写视口的时候就已经写好了
 
 ## SSR
 
