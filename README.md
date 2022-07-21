@@ -388,6 +388,9 @@ JS中的this可以理解为执行环境或者调用对象。从物理的角度�
 
 1. 箭头函数的this是静态的，由词法作用域决定，所以箭头函数的this是根据词法作用域找最近的调用对象，也就是箭头函数外第一层函数的this对象。
 2. 因为箭头函数的this是基于词法作用域的，所以不可以修改。从而函数的四种绑定对于this都不管用，this不可以用new调用。
+3. 箭头函数没有arguments对象。
+4. 箭头函数不可以用bind、apply、call调用。
+5. 箭头函数不能作为生成器函数使用yield关键字。
 
 ### 8. 堆内存和栈内存
 
@@ -726,10 +729,10 @@ ES6的作用域：
 6. Symbol原始类型。
 7. Set、Map、WeakSet、WeakMap集合。
 8. 迭代器、生成器
-9. 类、继承：ES5中的继承是先创建子类然后调用父类构造器，ES6则是先创建父类this值，然后子类的构造函数在修改这个值。
+9. 类、继承：ES5中的继承是先创建子类然后调用父类构造器，ES6则是先创建父类this值，然后子类的构造函数再继承this对其进行修改。
 10. 数组：Array.of、Array.from、find、findIndex、fill。
 11. Promise、async。
-12. Proxy、Reflection。
+12. Proxy、Reflection：Reflection的主要作用是将分散在Object、Function、或全局函数中的方法（apply、delete、get、set）整合一起，方便统一管理原生API，其次是配合Proxy对代理对象做一些操作，Reflect的返回值可以代替try catch。
 13. ES6模块。
 
 ## 浏览器
@@ -1720,7 +1723,41 @@ React使用双缓存技术来实现更新逻辑，就行canvas绘制动画的双
    1. componentWillUnmount
    2. 卸载组件和DOM
    
+   ### 6. Hash路由和History路由
    
+   react路由有两种方式，hash和history路由。
+   
+   以history路由为例，当url改变，首先触发history相关的事件popstate，触发回调函数。回调函数中会调用setstate更新location路由信息，然后在Router组件通过context传递给route组件匹配，匹配的route组件会渲染对应的组件。
+   
+   如果是调用history.push来改变路由，实际上就是调用window.history.pushState改变url，同时不刷新页面。然后调用setState，后续流程相同。
+   
+   hash路由原理也一样，只是路由改变调用的接口是window.location.hash，触发的事件是hashchange。
+   
+   ![img](images/ac7ed7a701714650b55c9193db2220eatplv-k3u1fbpfcp-zoom-in-crop-mark1304000-165832637173113.awebp)
+   
+   **区别：**
+   
+   1. hash路由是通过调用window.location.hash和window.location.raplace来修改URL触发window.onpopstate事件，后者无历史记录。
+   
+   2. history路由时通过调用widnow.history.pushState和window.location.replaceState来修改浏览历史触发window.hashchange事件。后者是替换当前历史。
+   
+   3. history路由刷新后会重新get请求，所以实际项目中要在后台要将所有访问指向index.html，否则刷新后会显示404等错误。
+   
+   4. hash路由刷新后不会发送get请求。
+   
+   5. hash路由有#，不够优雅，并且hash本来是用于锚点的，使用hash作为路由会影响锚点的使用。
+   
+   6. history修改的新URL可以是与当前URL同源的任意URL，而hash只能修改#后面的部分，所以只能设置为当前文档的URL。
+   
+   7. history设置的新URL和之前的URL相同也能添加入history栈中，而hash必须设置为不同的URL才能添加到history栈中。
+   
+   8. history通过state状态对象可以添加任何类型的数据到记录栈中，而hash只能添加端字符串。
+   
+   9. history可以额外设置title属性供后续使用。
+   
+   10. 先有hash后有history，前者兼容IE8以上后者IE10以上。
+   
+       
 
 ## Vue
 
@@ -1796,6 +1833,24 @@ proxy.name = 'tom'
 - onUpdated
 - onBeforeUnmount
 - onUnmounted
+
+### 4. Vuex
+
+Vuex：Vue自带的状态管理库。
+
+- State：存放数据的地方，相当于redux中reducer初始化时传入的state。
+- Mutations：相当于reducer，处理state的变化。
+- Actions：分装修改数据的逻辑调用commit提交修改。
+- Store：和redux中的Store一样，Store底下挂载了上述的对象。
+- getters：用于将state中的数据加工。
+
+Vuex里面的dispatch只负责将动作转发到action，而commit负责最后动作提交到mutation这一步。而redux里面的dispatch如果传入的是action对象则提交到reducer如果传入的是函数则负责执行函数，并不会提交。这里的commit实际相当于把redux的流程提取成两步了，多了一个最终提交的commit，所以dispatch不能直接传递到mutation。
+
+
+
+<img src="images/image-20220717155105062.png" alt="image-20220717155105062" style="zoom:80%;" />
+
+<img src="images/image-20220717155028795.png" alt="image-20220717155028795" style="zoom: 50%;" />
 
 ## 项目1：播放器
 
