@@ -395,7 +395,7 @@ useLayoutEffect 和 useEffect 不同的地方是采用了同步执行，那么�
 
 react路由有两种方式，hash和history路由。
 
-以history路由为例，当url改变，首先触发history相关的事件popstate，触发回调函数。回调函数中会调用setstate更新location路由信息，然后在Router组件通过context传递给route组件匹配，匹配的route组件会渲染对于的组件。
+以history路由为例，当url改变，首先触发history相关的事件popstate，触发回调函数。回调函数中会调用setstate更新location路由信息，然后在Router组件通过context传递给route组件匹配，匹配的route组件会渲染对应的组件。
 
 如果是调用history.push来改变路由，实际上就是调用window.history.pushState改变url，同时不刷新页面。然后调用setState，后续流程相同。
 
@@ -479,8 +479,8 @@ const hook2 = useRef(new Fn())
 
 ### 18.1 React 为什么有自己的事件系统？ 
 
-1. 首先，对于不同的浏览器，对事件存在不同的兼容性，React 想实现一个兼容全浏览器的框架， 为了实现这个目标就需要创建一个兼容全浏览器的事件系统，以此抹平不同浏览器的差异。
-2. 其次，v17 之前 React 事件都是绑定在 document 上，v17 之后 React 把事件绑定在应用对应的容器  container 上，将事件绑定在同一容器统一管理，防止很多事件直接绑定在原生的 DOM 元素上（实现一个HTML下多个应用）。造成一些不可控的情况。由于不是绑定在真实的  DOM 上，所以 React 需要模拟一套事件流：事件捕获-> 事件源 -> 事件冒泡，也包括重写一下事件源对象 event 。
+1. 首先，不同的浏览器对事件存在不同的兼容性，React 想实现一个兼容全浏览器的框架， 为了实现这个目标就需要创建一个兼容全浏览器的事件系统，以此抹平不同浏览器的差异。
+2. 其次，v17 之前 React 事件不是绑定在真实DOM上的，react只在Document或者容器DOM上绑定了一个dispatchEvent函数，由这个函数来进一步派发React自己的合成事件。由于不是绑定在真实的  DOM 上，所以 React 需要模拟一套事件流：事件捕获-> 事件源 -> 事件冒泡，也包括重写一下事件源对象 event 。
 3. 最后，这种事件系统，大部分处理逻辑都在底层处理了，这对后期的 ssr 和跨端支持度很高。
 4. 事件系统实现了事件委托，有利于节省内存，优化性能。
 
@@ -498,17 +498,19 @@ const hook2 = useRef(new Fn())
 
 ### 18.4 React事件触发的流程
 
-1.点击按钮button。
+1.点击按钮button，开启批量更新。触发click事件回调函数，回调函数执行dispatchEvent，dispatch react的click合成事件，并传入事件源Button元素本身。
 
-2.批量更新。
+2.根据事件类型，合成新的事件源，里面包含了 preventDefault 和 stopPropagation 等方法。
 
-3.根据事件类型，合成新的事件源，里面包含了 preventDefault 和 stopPropagation 等方法。
-
-4.形成事件执行队列，在第一步通过原生 DOM 获取到对应的 fiber ，接着会从这个 fiber 向上遍历，遇到元素类型 fiber ，就会收集事件，用一个数组收集事件：
+3.形成事件执行队列，在第一步通过原生 DOM 获取到对应的 fiber ，接着会从这个 fiber 向上遍历，遇到元素类型 fiber ，就会收集事件，用一个数组收集事件：
 
 1. 遇到捕获阶段事件则unshift加入数组前。
 2. 遇到冒泡阶段事件在push加入数组后。
-3. 一致收集到顶端App形成执行队列，然后一次执行队列中的事件，模拟冒泡和捕获。
+3. 一直收集到顶端App形成执行队列，然后一次执行队列中的事件，模拟冒泡和捕获。
+
+4.传入事件源，执行更新队列。
+
+<img src="images/f361b1a9c38646c698ae12b8befa8535tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="7.jpg" style="zoom:50%;" />
 
 ### 18.5 事件系统如何模拟冒泡和捕获阶段？
 
@@ -566,3 +568,64 @@ React17的事件是注册到根root上而非document
 捕获事件（例如，onClickCapture）现在使用的是实际浏览器中的捕获监听器（Capture phase events (e.g. onClickCapture) now use real browser capture phase  listeners.）
 
 ![img](images/v2-0064f671523d8e9e39f9d94662d3dcd1_720w.jpg)
+
+## 19. redux
+
+### 19.1 为什么要用redux
+
+**组件之间复杂状态如何管理**
+
+设想一种场景，就是一些通过 ajax 向服务器请求的重要数据，比如用户信息，权限列表，可能会被多个组件需要，那么如果每个组件初始化都请求一遍数据显然是不合理的。这时候常用的一种解决方案是，应用初始化时候，只请求一次数据，然后通过状态管理把数据存起来，需要数据的组件只需要从状态管理中‘拿’就可以了。
+
+<img src="images/9c8cdb1e78cb458eb20cabc6d5cf8da4tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="3.jpg" style="zoom:50%;" />
+
+**复杂组件之间如何通信**
+
+对于组件树形结构中，非同父节点之间的通信，常规的方式实现起来非常困难（props传递+状态提升、事件总线）。
+
+### 19.2 React-Redux,Redux,React三者关系
+
+- `Redux`： 首先 Redux 是一个应用状态管理js库，它本身和 React 是没有关系的，换句话说，Redux 可以应用于其他框架构建的前端应用，甚至也可以应用于 Vue 中。
+- `React-Redux`：React-Redux 是连接 React 应用和 Redux 状态管理的桥梁。React-redux 主要专注两件事，一是如何向 React 应用中注入 redux 中的 Store ，二是如何根据 Store 的改变，把消息派发给应用中需要状态的每一个组件。
+- `React`：这个就不必多说了。
+
+### **19.3 redux优势**
+
+#### redux的三大原则
+
+- 1 单向数据流：整个 redux ，数据流向都是单向的，用一张官网的图片描述整个数据流动的流程。
+
+![redux.gif](images/d3775935f59d435fa6326dbcef90519etplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+
+- 2 state 只读：在 Redux 中不能通过直接改变 state ，来让状态发生变化，如果想要改变 state ，那就必须触发一次 action ，通过 action 执行每个 reducer 。
+- 3 纯函数执行：每一个 reducer 都是一个纯函数，里面不要执行任何副作用，返回的值作为新的 state ，state 改变会触发 store 中的 subscribe 。
+
+#### 发布订阅思想
+
+redux 可以作为发布订阅模式的一个具体实现。redux 都会创建一个 store ，里面保存了状态信息，改变 store 的方法 dispatch ，以及订阅 store 变化的方法 subscribe 。
+
+#### 中间件思想
+
+redux 应用了前端领域为数不多的中间件 `compose` ，那么 redux 的中间件是用来做什么的？ 答案只有一个： 那就是**强化 dispatch** ， Redux 提供了中间件机制，使用者可以根据需要来强化 dispatch 函数，传统的 dispatch 是不支持异步的，但是可以针对 Redux 做强化，于是有了 `redux-thunk`，`redux-actions` 等中间件，包括 dvajs 中，也写了一个 redux 支持 promise 的中间件。
+
+一起来看一下 compose 是如何实现的：
+
+```js
+const compose = (...funcs) => {
+  return funcs.reduce((f, g) => (x) => f(g(x)));
+}
+```
+
+- funcs 为中间件组成的数组，compose 通过数组的 reduce 方法，实现执行每一个中间件，强化 dispatch 。
+
+### 19.4 redux原理
+
+1. Provider注入store
+   - React-Redux 是通过 context 上下文来保存传递 Store 的，但是上下文 value 保存的除了 Store 还有 subscription 。
+   - subscription 可以理解为订阅器，在 React-redux 中一方面用来订阅来自 state 变化，另一方面通知对应的组件更新。在 Provider 中的订阅器 subscription 为根订阅器，
+   - 在 Provider 的 useEffect 中，进行真正的绑定订阅功能，其原理内部调用了 store.subscribe ，只有根订阅器才会触发store.subscribe，至于为什么，马上就会讲到。
+
+2. 每一个用connect包裹的组件内部都有订阅器，然后这些层级组件之间的connect中的订阅器也会建立层级关系。整体上就是层层订阅（下层订阅上层）、层层下发（上层的更新会下发到下层，由下层决定是否更新）。
+
+3. 通过中间件强化dispatch，来实现异步或者数据加工等功能。
+
