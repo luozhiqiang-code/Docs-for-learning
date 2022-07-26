@@ -295,7 +295,130 @@ width、height表示可见宽度和高度，即content+padding+border。
 
 **伪元素：**如名字一样，效果如同增加了虚拟的元素。用于创建一些不在DOM树中的元素，例如、首字母first-word、首行first-line、before、after。
 
-html5规定伪类用：，伪元素用：：。在这之前都是：。
+html5规定伪类用：，伪元素用：：。在这之前都是：。.
+
+### 13 画一条0.5px的线
+
+![image-20220726102513937](images/image-20220726102513937.png)
+
+1. 直接设置元素的高为0.5px，不同浏览器表现不一致。并且安卓和苹果表现也不一样。
+
+   - chrome：把0.5四舍五入，0.5入成1，0.4舍为0。
+   - Firefox：将不小于0.55px当成1px。
+   - Safari：将不小于0.75px当成1px。
+
+2. **缩放：scaleY(0.5)**，通用的方案。直接用缩放有些浏览器只是模糊了，没有完全达到0.5px的效果，所以再加上transform-origin:50% 100%；
+
+3. 利用黑白色的线性渐变：linear-gradient(0deg，#FFF, #000）,实现效果和直接缩放一样，只是模糊了，不够完美。
+
+4. box-shadow：给一个元素设置高度为height:1px，背景不展示background:none，从而隐藏元素，然后设置阴影为正下方0.5px处，模糊半径为0, 颜色为黑色box-shadow: 0 0.5px 0 #000。缺点就是Safari不支持小于1px的box-shadow。
+
+5. SVG：利用svg的line元素划线，stroke表示描边的颜色。由于SVG的stroke等属性的1px就是物理像素的1px，而CSS中的1px实际是物理屏的两个px，所以这里描绘的1px就是CSS的0.5px。另外还可以使用svg的rect等元素进行绘制。缺点就是Firefox的background-image如果是svg的话只支持命名颜色，不支持色值。
+
+6. 在head中的meta标签设置viewport：
+
+7. ```html
+   <meta name="viewport" content="width=device-width,initial-sacle=1">
+   ```
+
+   其中width=device-width表示将viewport视窗的宽度调整为设备的宽度，这个宽度通常是指物理上宽度。默认的缩放比例为1，如iphone 6竖屏的宽度为750px，它的dpr=2，用2px表示1px，这样设置之后viewport的宽度就变成375px。这时候0.5px的边就使用我们上面讨论的方法。
+
+   但是你可以把scale改成0.5：
+
+   ```html
+   <meta name="viewport" content="width=device-width,initial-sacle=0.5">
+   ```
+
+   这样的话，viewport的宽度就是原本的750px，所以1个px还是1px，正常画就行，但这样也意味着UI需要按2倍图的出，整体面面的单位都会放大一倍。
+
+总结：使用transfrom scale/svg的方法兼容性和效果都是最好的，svg可以支持复杂的图形，所以**在viewport是1的情况下，可以使用transform/SVG画0.5px，而如果viewport的缩放比例不是1的话，那么直接画1px即可**。
+
+### 14 transform
+
+#### 变形函数
+
+1. 位移：
+   - translate()
+   - translateX()
+   - translateY()
+   - translateZ()
+   - translate3d()
+2. 缩放
+   - scale()
+   - scaleX()
+   - scaleY()
+   - scaleZ()
+   - scale3d()
+3. 旋转
+   - rorate()
+   - rotateX()
+   - rotateY()
+   - rotateX()
+   - rotate3d()
+4. 倾斜
+   - skew()
+   - skewX()
+   - skewY()
+5. 其它变形
+   - matrix()
+   - matrix3d()
+   - perspective()
+
+#### 变形原点
+
+transform-origin: 长度值 长度值
+
+### 15 transition
+
+##### 如何触发过渡：
+
+- 使用伪类hover、invalid、click。
+- 添加和删除类。
+
+transition：过渡属性 过渡持续时间 过渡时序函数 过渡延迟。
+
+注意：过渡有关的属性一般设置在稳定的状态上，这样使得过渡前后都有效果。
+
+##### 过渡事件
+
+```js
+document.querySelector('div').addEventListener('transitioned', function(e){console.log(e.propertyName)});
+```
+
+##### **过渡延迟**
+
+1. 设置一个值表示所有过渡属性延迟的时间
+2. 设置两个值，但是有两个以上的过渡属性，则以奇偶延迟
+3. 设置匹配的多个值，则是每个过渡属性开始过渡的延迟时间。设置一个过度延迟事件的序列可以让过度一个接着一个开始。
+4. 延迟时间如果为负值，且绝对值小于过渡时间，则从两者求和的位置开始过渡。如果绝对值大于过渡时间，则过度无效。
+
+### 16 animation
+
+##### 如何触发动画：
+
+- 使用伪类hover、invalid、click。
+- 添加和删除类。
+- 直接在元素上应用
+
+animation：动画名 持续时间 时序函数 延迟时间 迭代次数 动画方向 
+
+##### 动画事件
+
+1. 动画开始触发：animation start
+2. 动画结束时触发：animationend
+3. 动画几次迭代结束到下一次迭代开始之前触发：animationiteration
+
+##### 关键帧
+
+- 百分数
+- from、to
+
+```
+@keyframes spin{
+from{ transform:rotate(0deg)}
+to{transform:rotate(360deg)}
+}
+```
 
 ## HTML
 
@@ -1254,6 +1377,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 4. 在渲染树的基础上进行布局，计算每个节点的几何结构，计算position、overflow、z-index等。
    - **减少重绘和重排，加快渲染流程。**
    - **动画能使用CSS使用CSS，直接跳过重绘重排，到合成阶段，合成线程完成动画任务有GPU加速，且不阻塞主线程。**
+   - 设置CSS属性开启GPU加速：transform、opacity、filter、will-change
 
 14.GPU进程开始工作，合成图层绘制到屏幕上。
 
@@ -1347,6 +1471,53 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 2. 不让第三方网址访问用户的cookie，也就是cookie samesite属性设置为true。
 3. 请求附带验证信息，比如验证码或者token。
 4. 服务器阻止第三方网址访问接口。
+
+### 15. requestIdleCallBack和requestAnimationFrame
+
+#### 页面流畅与FPS
+
+页面要流畅就要保持fps在60帧以上，并且帧率要均匀。
+
+#### 每一帧要执行的任务
+
+- 处理用户的交互
+- JS 解析执行
+- 帧开始。窗口尺寸变更，页面滚去等的处理
+- requestAnimationFrame(rAF)
+- 布局
+- 绘制
+- 空余时间执行requestIdleCallBack
+
+<img src="images/image-20220725212742707.png" alt="image-20220725212742707" style="zoom:50%;" />
+
+#### requestIdleCallback
+
+requestIdleCallBack会在每一帧的任务执行完毕后执行，而requestAnimationFrame每一帧必执行。通过配置对象传入超时时间，可以保证任务如果超时被添加到宏任务中执行。返回值为唯一id和定时器一样，可以通过cancelIdleCallback取消任务。
+
+```
+var handle = window.requestIdleCallback(callback[, options])
+```
+
+<img src="images/3963958-01ac3e74fd8c0acf.png" alt="img" style="zoom: 80%;" />
+
+#### 使用总结
+
+1. 借助requestIdleCallBack可以将一些渲染任务分时间片在空余时间完成，通过第二个参数保证任务一定执行。
+2. requestIdleCallBack在一帧最后的空余时间执行，不建议在该函数里操作DOM，会导致重绘重排。DOM建议再requestAnimationFrame里面执行，因为这个函数执行在重绘重排前。同时，操作 DOM 所需要的耗时是不确定的，因为会导致重新计算布局和视图的绘制，所以这类操作不具备可预测性。
+3. **Promise 也不建议在这里面进行，因为 Promise 的回调属性 Event loop 中优先级较高的一种微任务，会在 `requestIdleCallback` 结束时立即执行，不管此时是否还有富余的时间，这样有很大可能会让一帧超过 16 ms。**
+
+#### requestAnimationFrame
+
+requestAnimationFrame在每一帧必定会执行，执行次数随屏幕刷新率调整。而且执行时机是在重绘重排之前，所以最适合做动画任务。返回值为唯一id和定时器一样，通过cancelAnimationFrame取消。
+
+<img src="images/3963958-634e481776dbd2f4.jpg" alt="img" style="zoom:50%;" />
+
+#### 使用总结
+
+1. 一旦页面不处于浏览的当前标签（document.hidden===true)，就会停止requestAnimationFrame的调用，节省CPU、GPU、电力。
+2. 函數節流：requestAnimationFrame在每次屏幕刷新只執行一次，如果是用回调函数可能会在每一帧16.7ms内执行多次。实际上屏幕的刷新率决定了动画的展示，一帧内执行多次没有意义，多次绘制不会再屏幕体现出来。
+3. 和定时器相比，requestAnimationFrame执行的次数和时机是根据刷新率自适应的，从而可以实现更流畅的动画。用定时器的最大问题是执行的实际是不固定的，可能刚好在帧末位或者直接不执行，或者多个任务叠加到一个帧内执行，导致页面卡顿闪现。
+4. 如果requestAnimationFrame内的要执行太多任务还是会导致卡顿，只是能保证执行间隔和屏幕刷新率保持一致。
 
 
 
@@ -2927,3 +3098,28 @@ https://interview2.poetries.top/docs/excellent.html#_31-1-udp
 
 **前端工程化**：github入门与实践、深入浅出webpack
 
+## 综合问题
+
+### 1. 面向对象和面向过程
+
+#### 面向过程
+
+面向过程就是分析解决问题所需要的步骤，然后通过函数将这些步骤一步一步实现，使用的时候依次调用就可以了。
+
+
+
+#### 面向对象
+
+面向对象是把构成问题的事物抽象成各个对象，建立对象的目的不是为了完成某个步骤，而是为了描述某个事物在解决整个问题的步骤中的行为。面向对象是根据功能来划分问题的，而不是步骤。
+
+##### 三个特性
+
+1. 封装：封装就是
+2. 继承
+3. 多态
+
+##### 优点
+
+1. 易维护：采用面向对象的思想设计的结构可读性搞、复用性强。由于继承的存在，即使改变需求、那么维护也只在局部模块。
+2. 易扩展：继承和多态的特性，方便在原有对象的基础上进一步扩展。
+3. 开发工作重用性、继承性高，降低重复工作量，从而缩短开发周期。
