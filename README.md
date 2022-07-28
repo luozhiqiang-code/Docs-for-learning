@@ -854,7 +854,7 @@ ES6的作用域：
 
 1. 块级作用域let和const：
 2. 模板字面量：模板字面量最大的威力就是标签模板，标签模板可以对模板中的字符串和变量进行处理返回新的字符串。例如styled-components就是利用标签模板实现在CSS代码中插入props变量的。
-3. 函数：形参默认值、不定参数（...)、展开云算法、name属性、块级函数、剪头函数。
+3. 函数：形参默认值、不定参数（...)、展开运算符、name属性、块级函数、箭头函数。
 4. 对象：属性值简写、方法简写、Object.is()、Object.assign()、super关键字（相当于Object.getPrototypeOf(this)。
 5. 解构：数组解构、对象解构。
 6. Symbol原始类型。
@@ -865,6 +865,79 @@ ES6的作用域：
 11. Promise、async。
 12. Proxy、Reflection：Reflection的主要作用是将分散在Object、Function、或全局函数中的方法（apply、delete、get、set）整合一起，方便统一管理原生API，其次是配合Proxy对代理对象做一些操作，Reflect的返回值可以代替try catch。
 13. ES6模块。
+
+### 20. JS和ES
+
+JS包括：
+
+- JS语言的核心部分的国际标准ECMAscript
+- 文档对象模型DOM
+- 浏览器对象模型BOM
+
+### 21 常见的DOM方法
+
+```js
+//create node
+let div = document.createElement("div");
+let testNode = document.createTextNode("tom");
+
+//relationship between nodes
+let parent = div.parentNode; //single parent node
+let childrens = div.childNodes; // live collection
+let nextSibling = div.nextSibling; //single parent node
+let previousSibling = div.previousSibling; //single parent node
+let firstChild = div.firstChild;
+let lastChild = div.lastChild;
+
+//manipulate node
+let returnNode1 = div.appendChild(div.firstChild);
+let returenElement = div.append(span)
+let returnNode2 = div.insertBefore(div.firstChild);
+let returnNode3 = div.replaceChild(div.lastChild, div.firstChild);
+let newNode = div.cloneNode(true); //true deep clone
+
+//selection of elements
+let singleNode = document.querySelector("#main div span");
+let nodeLists = document.querySelectorAll("div span");
+
+let singleNode1 = document.getElementById("circle");
+let liveHTMLCollections = document.getElementsByTagName("div");
+let liveHTMLCollections1 = document.getElementsByClassName("class1 class2");
+let liveNodeListCollectoins = document.getElementsByName("dot");
+
+//manipulate attributes
+div.setAttribute("class", "className");
+div.removeAttribute("class");
+let attributes = div.getAttribute("class");
+let tag = div.hasAttribute("name");
+
+//event
+div.addEventListener("click", callback, false);
+div.removeEventListener("click", callback, false);
+
+var div1 = document.getElementById("div1");
+div1.addEventListener(
+  "message",
+  function () {
+    console.log("test");
+  },
+  false
+);
+
+var div2 = document.getElementById("div2");
+div2.addEventListener(
+  "message",
+  function (e) {
+    console.log(this);
+    console.log(e);
+  },
+  false
+);
+var ev = document.createEvent("Event");
+ev.initEvent("message", false, true); // 起泡参数变为true，div1的事件就会触发
+div2.dispatchEvent(ev);
+
+```
 
 ## 浏览器
 
@@ -1959,26 +2032,44 @@ React使用双缓存技术来实现更新逻辑，就像canvas绘制动画的双
    **区别：**
    
    1. hash路由是通过调用window.location.hash和window.location.raplace来修改URL触发window.hashchange事件，后者无历史记录。
-   
    2. history路由时通过调用widnow.history.pushState和window.location.replaceState来修改浏览历史触发window.onpopstate事件。后者是替换当前历史。
-   
    3. **history路由刷新后会重新get请求，所以实际项目中要在后台要将所有访问指向index.html，否则刷新后会显示404等错误。**
-   
    4. hash路由刷新后不会发送get请求。
-   
    5. hash路由有#，不够优雅，并且hash本来是用于锚点的，使用hash作为路由会影响锚点的使用。
-   
    6. history修改的新URL可以是与当前URL同源的任意URL，而hash只能修改#后面的部分，所以只能设置为当前文档的URL。
-   
    7. **history设置的新URL和之前的URL相同也能添加入history栈中，而hash必须设置为不同的URL才能添加到history栈中。**
-   
    8. **history通过state状态对象可以添加任何类型的数据到记录栈中，而hash只能添加短字符串。**
-   
    9. **history可以额外设置title属性供后续使用。**
-   
    10. 先有hash后有history，前者兼容IE8以上后者IE10以上。
    
-       
+   ### 7 immutable数据的作用
+   
+   #### 为什么需要immutable数据
+   
+   React的更新是依赖于新旧props，新旧state的对比。如果props、state是原始值，原始值的对比是可以直接得出结果的。然而引用值的对比，比较的是引用地址，那么如果修改了一个对象的属性，对象的引用是不变的。如果要改变对象的引用地址，就得把对象深拷贝一份，深拷贝需要递归，非常消耗性能，并且还浪费内存。而React种渲染依赖与新旧props，state对比。性能的优化手段，例如React.memo缓存、pureComponent、useMemo、useCallback、shouldcomponentupdate、useEffect都需要对比依赖数组种的数据或者新旧state、props。所以React耗时三年打造了immutable.js。
+   
+   #### 什么是immutable数据
+   
+   一旦创建就不能再被更改，对于immutable的任意一处更改都会返回一个新的immutable对象，同时保证旧数据不变且可用。
+   
+   #### 优点
+   
+   1. immutable数据降低了可变数据带来的复杂度，比如向一个函数传入引用对象，不能保证原有对象保持不变。
+   2. immutable数据尽量复用内层，新的数据是在旧数据基础上生成的，两者公用某些数据。
+   3. immutable数据为撤销重做提供了可能，只需要把immutable每次改变返回的数据存到一个数组，这就是其历史记录。
+   4. 并发安全，传统的并发为了保证数据不一致的问题发明了各种锁，而immutable数据天然不可变，不需要并发锁。
+   5. immutable数据拥抱函数式编程，Immutable 本身就是函数式编程中的概念，纯函数式编程比面向对象更适用于前端开发。因为只要输入一致，输出必然一致，这样开发的组件更易于调试和组装。
+   
+   #### 缺点
+   
+   1. 需要学习新的API：数据的修改和创建要调用新的API。
+   2. 增加了资源的大小：需要引入immutable数据的库。
+   3. 容易与原生对象混淆，给开发带来难度。
+   
+   #### 现有的immutable库
+   
+   1. immutable.js
+   2. seamless-immutable.js
 
 ## Vue
 
@@ -3185,3 +3276,21 @@ https://interview2.poetries.top/docs/excellent.html#_31-1-udp
 4、接口隔离原则（ISP）：表明类不应该被迫依赖他们不使用的方法，也就是说一个接口应该拥有尽可能少的行为，它是精简的，也是单一的。
 
 5、依赖倒置原则（DIP）：表明高层模块不应该依赖低层模块，相反，他们应该依赖抽象类或者接口。这意味着不应该在高层模块中使用具体的低层模块。
+
+#### 用面向对象描述食堂
+
+1. 食堂类：食堂类里面有楼层类
+
+2. 楼层类：楼层类里面包括窗口类、大厅类
+
+3. 窗口类：窗口类里面有厨师类、服务员工类、清洁员工类等，这些类继承自食堂员工类，食堂员工类继承自学校职工类。
+
+   窗口里面还有厨具类、碗筷类等
+
+4. 大厅：大厅有桌子类、椅子类、电灯类、风扇类、空调类等。
+
+5. 食堂、楼层、窗口、大厅、员工、碗筷、桌椅、电器等都有表示自身状态的属性，例如ID、名称、品牌等。
+
+6. 具有行为的对象都表示行为的方法，例如厨师有自己做饭相关的方法、员工有自己打菜等方法、清洁员工有自己清洁等方法、电器有自己的运行等方法。
+
+7. 然后员工有层层的继承关系，食堂、楼层、窗口和窗口种的员工等都是组合关系。
