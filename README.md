@@ -222,13 +222,14 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 **引发重排**：
 
 1. 添加、删除可见的dom
-2. 元素的位置改变，元素的尺寸改变(外边距、内边距、边框厚度、宽高、等几何属性)
-3. 页面渲染初始化，浏览器窗口尺寸改变
-4. 获取一些属性包括：offsetTop、offsetLeft、  offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight、getComputedStyle() 
+2. 元素的位置改变（left、right、top、bottom），元素的尺寸改变(margin、padding、width、height)。
+3. 元素style信息的获取（width/height、offsetTop/Left/Right/Bottom、offsetWidth/Height、scrollTop/Left/Width/Height、clientTop/Left/Width/Height）
+4. 页面渲染初始化，浏览器窗口尺寸改变
+5. 获取一些属性包括：offsetTop、offsetLeft、  offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight、getComputedStyle() 
 
 **引发重绘：**
 
-1. 修改元素与颜色相关的属性，例如元素的颜色、背景
+1. 修改元素与颜色相关的属性，例如元素的颜色、背景（background-color、font-color、border-color、outline等）
 
 **减少重绘和重排**：
 
@@ -236,6 +237,8 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 2. 不要把DOM节点的属性值放到循环里面当循环的变量，可以用变量来保存这个属性值。
 3. 除非不得已，不要使用table布局，table布局一个小改动会影响这个布局，开销极大。
 4. 如果需要插入多个DOM元素，可以通过创建documentFragment一次插入，或者innerHtml插入。
+5. 对于需要多次重排的元素，设置position定位使其脱离文档流，从而不会影响别的元素，例如实现动画。
+6. 多次操作一个元素是可以先display：none隐藏，是元素不在渲染树，待操作完成后再展示。
 
 ### 9. 盒模型
 
@@ -950,33 +953,222 @@ div2.dispatchEvent(ev);
 #### 深拷贝（完全拷贝）
 
 1. JSON.parse(JSON.stringify(obj));
-
    - 无法实现对函数、RegExp等特殊对象的拷贝
    - 会抛弃对象的constructor，所有构造函数指向Object
    - 如果有循环应用会出错
-
 2. 递归，后续遍历实现一个深拷贝。
-
    - 用map解决循环引用的问题
-
    - 用instancesof或Object.prototype.toString.call(obj)来分辨引用类型
-
    - 用克隆对象的构造器来得到一个新的初始对象保证不丢失原型
-
    - 对于Map、Set、Array、Object等可以递归遍历的引用类下则递归处理
-
      - Map：`cloneTarget.set(deepClone(key, map), deepClone(item, map));`
      - Set：` cloneTarget.add(deepClone(item, map));`
      - Array、Object：`cloneTarget[prop] = deepClone(target[prop], map);`
-
    - 对于Boolean、Number、String、Symbol、Error、Date、RegExp、Function这类不能遍历的引用类型用特殊方法处理
-
      - Boolean、Number、String、Symbol：`new Object(Boolean.prototype.valueOf.call(target)); `
      - Error、Date：`new Ctor(target);`
      - RegExp：`const { source, flags } = target;   new target.constructor(source, flags);`
      - Function：toString获取函数字符串，然后正则解析出函数体和参数传入构造函数Funtion得到函数对象。或者eval直接执行。
 
+### 23 JS模块（CommonJS、CMD、AMD、ES6 Modules）
+
+#### CommonJS
+
+定义非浏览器平台使用的API，一般是node环境下。
+
+commonJS导入的模块分为三种：
+
+1. 核心模块(`Node.js`自带的模块)
+2. 路径模块(相对或绝对定位开始的模块)
+3. 自定义模块(`node_modules`里的模块)
+
+```js
+// 直接导入
+const path = require('path');
+// 相对路径
+const m1 = require('./m1.js');
+// 直接导入
+const lodash = require('lodash');
+
+```
+
+三种模块的查找方式：
+
+1. 核心模块，直接跳过路径分析和文件定位
+2. 路径模块，直接得出相对路径就好了
+3. 自定义模块，先在当前目录的`node_modules`里找这个模块，如果没有，它会往上一级目录查找，查找上一级的`node_modules`，依次往上，直到根目录下都没有, 就抛出错误。
+
+通过上面模块的文件查找方式之后，总结下文件查找的优先级：
+
+- 缓存的模块优先级最高
+- 如果是内置模块，则直接返回，优先级仅次缓存的模块
+- 如果是绝对路径 / 开头，则从根目录找
+- 如果是相对路径 ./开头，则从当前require文件相对位置找
+- 如果文件没有携带后缀，先从js、json、node按顺序查找
+- 如果是目录，则根据 package.json的main属性值决定目录下入口文件，默认情况为 index.js
+- 如果文件为第三方模块，则会引入 node_modules 文件，如果不在当前仓库文件中，则自动从上级递归查找，直到根目录
+
+CommonJS规范特点：
+
+1. 所有代码都运行在模块作用域，不会污染全局作用域；
+2. 模块是同步加载的，即只有加载完成，才能执行后面的操作；
+3. 模块在首次执行后就会缓存，再次加载只返回缓存结果，如果想要再次执行，可清除缓存；
+4. CommonJS输出是值的拷贝(即，`require`返回的值是被输出的值的拷贝，模块内部的变化也不会影响这个值)。
+
+#### AMD
+
+AMD规范就是Asynchronous Module Definition，是用在浏览器端的模块机制，主要特点是异步。
+
+#### CMD
+
+CMD (Common Module Definition), 是seajs推崇的规范，CMD则是依赖就近，用的时候再require。
+
+#### 两者区别
+
+##### 申明依赖模块不同
+
+对于依赖的模块，AMD 和 CMD 的处理方式是不一样的。
+
+- AMD 推崇依赖前置，在定义模块的时候就要声明其依赖的模块。
+- CMD 推崇依赖就近，只有在用到某个模块的时候再去 require 。
+
+##### 执行依赖模块时机
+
+- AMD 提前执行依赖（异步加载：依赖先执行）+延迟执行
+- CMD 延迟执行依赖（运行到需加载，根据顺序执行）
+
+#### ES6 Modules规范
+
+`ES6`标准出来后，`ES6 Modules`规范算是成为了前端的主流吧，以`import`引入模块，`export`导出接口被越来越多的人使用。
+
+`ES6 Modules`规范：
+
+- 输出使用`export`
+- 输入使用`import`
+- 可以使用`export...from...`这种写法来达到一个`"中转"`的效果
+- 输入的模块变量是不可重新赋值的，它只是个可读引用，不过却可以改写属性
+- `export`命令和`import`命令可以出现在模块的任何位置，只要处于模块顶层就可以。 如果处于块级作用域内，就会报错，这是因为处于条件代码块之中，就没法做静态优化了，违背了ES6模块的设计初衷。
+- `import`命令具有提升效果，会提升到整个模块的头部，首先执行。
+
+#### CommonJS与ES6 Modules规范的区别
+
+- CommonJS模块是运行时加载，ES6 Modules是编译时输出接口
+- CommonJS输出是值的拷贝；ES6 Modules输出的是值的引用，被输出模块的内部的改变会影响引用的改变
+- CommonJs导入的模块路径可以是一个表达式，因为它使用的是`require()`方法；而ES6 Modules只能是字符串
+- CommonJS `this`指向当前模块，ES6 Modules `this`指向`undefined`
+- 且ES6 Modules中没有这些顶层变量：`arguments`、`require`、`module`、`exports`、`__filename`、`__dirname`
+
+关于第一个差异，是因为CommonJS 加载的是一个对象（即`module.exports`属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
+
+### 24 高性能JS
+
+#### 数据存储
+
+在js中数据存储会对代码的性能有重要的影响。数据存储有4中方法：字面量，变量，数组项，对象成员，他们有着各自的性能特点。
+
+1、字面量和局部变量的访问速度是最快的，相反访问数组元素、全局变量、对象成员则相对较慢
+
+2、局部变量存在于作用域链的最开始位置，局部变量性能远好于全局变量，尤其是跨作用域的访问（可以简单的理解为跨文件的引用这种）
+
+3、避免使用with语句和try，catch中的catch，它们会改变执行环境作用域链
+
+4、嵌套的对象成员会明显印象性能，尽量少用。
+
+5、所有的对象成员，数组，跨域变量在使用的时候，最佳方式是使用局部变量赋值之后使用。
+
+例如经常使用object.b这个成员，需要定义局部变量var tmp = object.b
+
+#### 算法和流程控制
+
+1、基于函数的迭代foreach，each，性能要差于简单的for，while，do-while等循环，只有他们的1/8，尽量少用基于函数的迭代，还包括every。
+
+2、不要使用for in，除非在一个属性数量未知的对象，它的效率只有普通循环的1/7；
+
+3、在for语句中的判断条件，将每次都要取的length改为使用局部变量，大部分浏览器中可以提升25%的性能
+
+    低效写法：for（var i=0， i<items.length, i++)
+    高效写法：var len = items.length
+              for(var i=0, i<len, i++)
+
+4、使用倒序的写法，并将true和false的比较改为直接与0比较，0在bool时直接就是false。上面第3点中的传统写法，会先计算出i<len的值是true还是false，再将结果与true比较。而直接用0来比较会减少一次计算取值（0就是false），在迭代次数很多的时候会提高50%左右的性能
+
+    for（var i = items.length, i--,){
+        process()
+    }
      
+    var j = items.length
+    while(j--) {
+        process()
+    }
+
+
+5、使用“达夫设备”，代替传统的循环。正常的写法一个长度1000的数组process函数调用1000次，且i--，i<len的比较同样进行1000次。而达夫设备的写法是循环1次，一次连着运行8次process，当迭代次数很多时候，例如50000次的时候，性能可以提高70%。  这么看达夫设备就是为了减少比较次数，节省性能
+
+    // 处理余数
+    var i = items.length % 8
+    while(i) {
+        process(item[i--]
+    }
+     
+    // 处理整除数的主循环
+    j = Math.floor(length/8)
+     
+    while(j){
+        process(item[i--])
+        process(item[i--])
+        process(item[i--])
+        process(item[i--])
+        process(item[i--])
+        process(item[i--])
+        process(item[i--])
+        process(item[i--])
+    }
+
+6、if else和switch。在条件众多的时候倾向于用switch，条件很少的时候使用if else。当if else的离散值有多个的时候，尽量的写法是要比较每个值都进行比较，高性能的写法是：
+
+    if (value < 6) {
+        if(val < 3) {
+            if(val === 0){}
+            else if(val === 1){}
+            else{// 这里就是等于2的时候}
+        } else {
+            if(val === 3){}
+            else if(val === 4){}
+            else{// 这里就是等于5的时候}
+        }
+    }
+     
+    上述写法就是为了减少比较的次数，但遇到这种情况就直接用switch吧
+
+7、如果离散的值还要更多，那么直接用数据的查找表来实现item[i]，这样几乎不会产生额外的性能开销。
+
+8、尽量比较减少迭代，反复的在一个函数中调用函数，比老老实实写一个循环开销要大的多，而且迭代函数的可读性也不如循环来的直观和简单。
+
+#### 字符串相关的优化
+
+字符串是每个语言都离不开的变量类型，在js中更是使用非常的频繁，掌握它的相关高效写法，多多少少会提升代码性能。最不济当A和B两种写法都可以的时候，给了你一种较为正确选择的理由，拒绝纠结，快速决断。
+
+1、字符串连接
+
+如果这么写一个语句str += “one” + “two”，代码运行时会有多个步骤，创建两个临时变量，连接两个临时变量，然后和str连接，最后赋值给str变量。
+
+更简便的写法是，分开使用自加运算符：
+
+str += “one”
+
+str += “two”
+
+这样避免了使用临时变量和开辟内存空间，大多数浏览器中可以提升10% - 40%的性能。
+
+2、数组项合并，使用array.join()
+
+在目前大多数的浏览器中，这个方法都比+=更慢，但是由于这个函数真的很好用，所以如果有业务需求，数据量大的话，那么就直接用即可。毕竟少写几行代码和性能的权衡，我还是愿意少写代码吧（笑哭）
+
+3、string.contact()字符串连接函数
+
+这个函数性能也会比+，+=更慢，所以如果是数量少的字符串连接尽量使用+，+=符号。
+
+字符串相关的性能写法，书上讲的不多，简单总结来看+，+=是性能最佳的写法，如果字符串数量少的话，就直接+，+=即可。
 
 ## 浏览器
 
@@ -1631,9 +1823,153 @@ requestAnimationFrame在每一帧必定会执行，执行次数随屏幕刷新�
 3. 和定时器相比，requestAnimationFrame执行的次数和时机是根据刷新率自适应的，从而可以实现更流畅的动画。用定时器的最大问题是执行的实际是不固定的，可能刚好在帧末位或者直接不执行，或者多个任务叠加到一个帧内执行，导致页面卡顿闪现。
 4. 如果requestAnimationFrame内的要执行太多任务还是会导致卡顿，只是能保证执行间隔和屏幕刷新率保持一致。
 
-### 16. 浏览器安全
+### 16. document.write和innerHTML的区别
 
-1. 
+document.write
+
+1. 是直接将内容写入页面的内容流 （脚本元素script的位置），会导致页面全部重绘
+2. 属于document对象的方法
+3. 文档解析完（document.onload完成）再调用则不会产生覆盖，否则会。
+4. 拼接方法一般是多次调用
+
+element.innerHTML
+
+1. 将内容吸入到DOM节点中，不会导致页面全部重绘。
+2. 属于元素对象的属性
+3. 直接调用会覆盖原内容
+4. 拼接方法一般是采用+字符串拼接。
+
+### 17. websocket
+
+WebSocket 是一个持久化的网络通信协议，可以在单个 TCP 连接上进行 **全双工通讯** ，没有了 **Request** 和 **Response** 的概念，两者地位完全平等，连接一旦建立，客户端和服务端之间可以实时进行双向数据传输。
+
+#### 为什么要有websocket：
+
+- HTTP 是非持久协议，客户端想知道服务端的处理进度只能通过轮询或者是长轮询的方式，但是前者对服务器压力大，后者则会因为一直等待响应造成阻塞。
+- 虽然 http1.1 默认开启了 keep-alive 长连接保持了这个 TCP 通道使得在一个 HTTP 连接中可以发送多个请求，接受多个响应，但是一个请求只能有一个响应，而且这个响应也是被动的，不能主动发起
+- WebSocket 虽然是独立于 HTTP 的一种协议，但是 WebSocket 必须依赖 HTTP 协议进行一次握手（在握手阶段是一样的，借助upgrade和connect字段），握手成功后，数据就直接从 TCP 通道传输，与 HTTP 无关了，可以用一张图理解两者有交集，但并不是全部。
+
+
+
+<img src="https://s.poetries.work/images/202203211356046.png" alt="img" style="zoom:50%;" />
+
+#### websocket和HTTP的区别
+
+1. 双向通信
+2. 数据格式比较轻量，性能开销小，通信高效
+   - 协议控制的数据包头部较小，而`HTTP`协议每次通信都需要携带完整的头部
+3. 更好的二进制支持
+4. 没有同源限制，客户端可以与任意服务器通信
+5. 与 `HTTP` 协议有着良好的兼容性。默认端口也是`80`和`443`，并且握手阶段采用 `HTTP` 协议，因此握手时不容易屏蔽，能通过各种 `HTTP` 代理服务器
+
+#### websocket应用场景
+
+1. 弹幕
+2. 消息订阅
+3. 实时游戏、直播、会议、聊天室
+4. webpack的devserver的热更新和模块热替换就是基于websocket的
+
+### 18 .v-show和v-if
+
+#### 相同点
+
+用于控制元素是否展示。
+
+#### 不同点
+
+1. 控制手段不同
+   - v-show是通过设置display属性为none，从而将dom节点从渲染树中移除，但是还存在于DOM树中。
+   - v-if则是通过将dom节点从DOM树中添加删除来实现
+2. 编译过程不同
+   - v-show切换只是简单的样式改变
+   - v-if切换有一个局部编译/卸载的过程，切换过程中会销毁或重建内部的事件监听和子组件
+3. 编译条件不同
+   - v-show有false变为true的时候不会触发组件的什么周期，组件一致都在内存中，只是展示与否。
+   - v-if是真正的条件渲染，它会确保在切换的过程中条件块内的事件监听器和子组件适当的销毁和重建，只有条件为真是才渲染重建，为假时销毁。
+   - v-if有false切换到true会触发beforeCreate、created、beforeMount、mounted钩子，由true切换到false会触发beforeUnmount和unMounted钩子。
+4. 性能消耗不同
+   - v-if的切换会导致内部的事件监听器和子组件的渲染，性能消耗大。
+   - v-show只是改变css样式，性能消耗更小。
+5. 使用场景
+   - 频繁的切换，例如菜单切换或者过度动画。
+   - 运行时条件很少改变，例如组件的条件渲染。
+
+#### 原理
+
+具体解析流程这里不展开讲，大致流程如下
+
+- 将模板`template`转为`ast`结构的`JS`对象
+- 用`ast`得到的`JS`对象拼装`render`和`staticRenderFns`函数
+- `render`和`staticRenderFns`函数被调用后生成虚拟`VNODE`节点，该节点包含创建`DOM`节点所需信息
+- `vm.patch`函数通过虚拟`DOM`算法利用`VNODE`节点创建真实`DOM`节点
+
+##### **v-show原理**
+
+不管初始条件是什么，元素总是会被渲染
+
+我们看一下在`vue`中是如何实现的
+
+代码很好理解，有`transition`就执行`transition`，没有就直接设置`display`属性
+
+```javascript
+// https://github.com/vuejs/vue-next/blob/3cd30c5245da0733f9eb6f29d220f39c46518162/packages/runtime-dom/src/directives/vShow.ts
+export const vShow: ObjectDirective<VShowElement> = {
+  beforeMount(el, { value }, { transition }) {
+    el._vod = el.style.display === 'none' ? '' : el.style.display
+    if (transition && value) {
+      transition.beforeEnter(el)
+    } else {
+      setDisplay(el, value)
+    }
+  },
+  mounted(el, { value }, { transition }) {
+    if (transition && value) {
+      transition.enter(el)
+    }
+  },
+  updated(el, { value, oldValue }, { transition }) {
+    // ...
+  },
+  beforeUnmount(el, { value }) {
+    setDisplay(el, value)
+  }
+}
+```
+
+##### **v-if原理**
+
+`v-if`在实现上比`v-show`要复杂的多，因为还有`else` `else-if` 等条件需要处理，这里我们也只摘抄源码中处理 `v-if` 的一小部分
+
+返回一个`node`节点，`render`函数通过表达式的值来决定是否生成`DOM`
+
+```javascript
+// https://github.com/vuejs/vue-next/blob/cdc9f336fd/packages/compiler-core/src/transforms/vIf.ts
+export const transformIf = createStructuralDirectiveTransform(
+  /^(if|else|else-if)$/,
+  (node, dir, context) => {
+    return processIf(node, dir, context, (ifNode, branch, isRoot) => {
+      // ...
+      return () => {
+        if (isRoot) {
+          ifNode.codegenNode = createCodegenNodeForBranch(
+            branch,
+            key,
+            context
+          ) as IfConditionalExpression
+        } else {
+          // attach this branch's codegen node to the v-if root.
+          const parentCondition = getParentCondition(ifNode.codegenNode!)
+          parentCondition.alternate = createCodegenNodeForBranch(
+            branch,
+            key + ifNode.branches.length - 1,
+            context
+          )
+        }
+      }
+    })
+  }
+)
+```
 
 ## HTTP
 
@@ -2211,9 +2547,9 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 
 **Vue执行流程：**
 
-1. new一个Vue，Vue会调用init函数进行初始化，初始化生命周期、事件、props、methods、data、computed、watch等，其中最重要的是通过Object.defineProperty或者Proxy劫持对象或者对象的属性，在getter函数中进行依赖收集，将观察者Watcher对象存放到订阅者Dep的subs中。在setter函数通知之前依赖收集得到的Dep中的每一个Watcher，告诉他们值发送了改变需要重新渲染视图，然后这些Watcher就会调用update来更新视图。初始化之后调用mount挂载组件。
+1. new一个Vue，Vue会调用init函数进行初始化，初始化生命周期、事件、props、methods、data、computed、watch等，其中最重要的是通过Object.defineProperty或者Proxy劫持对象或者对象的属性，然后设置setter与getter函数。（在getter函数中进行依赖收集，将Watcher依赖对象存放到订阅者Dep的subs中。在setter函数通知之前依赖收集得到的Dep中的每一个Watcher，告诉他们值发送了改变需要重新渲染视图，然后这些Watcher就会调用update来更新视图。初始化之后调用mount挂载组件）。
 2. 如果是运行时编译，就是不存在render function但是存在template的情况还需要编译步骤将template字符串编译成render函数的字符串。编译过程可以分为parse解析字符串形成AST、optimize标记static静态节点优化渲染、generate将AST转换渲染函数字符串。
-3. 执行Render字符串，也就是执行Render函数渲染VDOM。此时执行render函数读取传入的参数会触发数据的Getter函数，然后开始依赖收集，目的就是将观察者Watcher对象存放到订阅者Dep的Subs中。**那么后续触发页面事件修改监听的对象时，就会触发setter函数**，setter中就会通知依赖收集得到的Dep中的每一个Watcher，然Watcher调用update更新视图。
+3. 执行Render字符串，也就是执行Render函数渲染VDOM。此时执行render函数读取传入的参数会触发数据的Getter函数，然后开始依赖收集，目的就是将Watcher依赖对象存放到订阅者Dep的Subs中。**那么后续触发页面事件修改监听的对象时，就会触发setter函数**，setter中就会通知依赖收集得到的Dep中的每一个Watcher，然Watcher调用update更新视图。
 4. 调用update更新视图不是简单的直接更新，会通过DIff算法求出新旧节点中变化的部分，然后封装为更新任务，添加到更新队列中，等待下一个tick时更新任务，并且这个更新是异步的，更新队列只能添加不同ID的任务，也就是同一个对象的属性只读取一次变化。
 
 ### 6. Vue和React的异同
@@ -2227,32 +2563,63 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 #### 不同之处
 
 1. 定义：一个是库，一个是框架。
-
    - 作为库React只提供了DOM操作，组件架构和状态管理等核心部分，其余的都交给社区。好处就是给开发人员提供了很大的自由度，坏处就是对于初学者来说选择最佳实践比较困难。
    - 作为框架Vue提供了DOM核心部分、许多语法糖、插件系统、内置质量、转换等，并且还提供了路由vue-router和状态管理Vuex等配套库和工具。
-
 2. 数据改变与UI更新的机制。
-
    - 灵活性、数据可预测：React提倡函数是编程的风格，例如高阶函数、不变性、纯函数等，其背后的理念就是保持状态不变，当试图改变状态对象的时候不会触发重新渲染，**要触发重新渲染必须调用setState方法**。这不仅会更新组件，还会更新整个组件的子树。所以可以使用PureComponent、shouldComponentUpdate、React.Memo、useCallback、useMemo等方法来控制渲染过程。这种灵活性带来的代价就是所有优化要手动完成、使得数据可预测。总而言之，React给开发人员提供了对重渲染过程中的大量控制，使得数据可预测，操作更灵活。
    - 相对不灵活、框架提供性能优化：Vue的核心就是数据模型，状态在数据对象中存储和表示，与React相反的是，Vue状态对象的改变会触发重新渲染。状态对象和视图是双向绑定的，对象的任何变化都会反应到视图中，同样视图的变化也会反应到对象中。这种数据的双向绑定使得程序员不需要去手动控制渲染过程和手动优化。
-
 3. 模板和样式：模板和样式会很大程度影响代码的设计。
-
    - React很大程度依赖于函数式编程，写react代码就是在写JavaScript函数。所以代码逻辑和html标签被视为一个整体，因此是混合的，是通过JSX来实现的。JSX本质是就是**React.createElement**的语法糖，用于创建DOM实体。
    - 因为React中JavaScript代码逻辑和HTML标签是混合的，所以在样式提供了inline-style和styled-components还有css-in-js。
    - Vue对于模板采用了更保守的方式，与逻辑分离的方式。将标签标示为和html看起来一样的模板，并且提供了语法糖例如条件和迭代。这使得Vue开发更像原生HTML开发，也是Vue的渐进式框架的基础。用Vue重构老的项目可以更好的复用原来的代码和逻辑。
    - Vue的处理样式的方式也是分离的，可以再延时标签中编写纯CSS，通过添加scoped属性可以将css的作用域限制在组件级别。其内部原理是React送的CSS-in-JS类似，一个是随机类名，一个是随机属性名。
-
 4. 可扩展性
-
    - React中大多数组件都是用来增强现有组件的高阶组件，例如react-redux就是利用了Context API并暴露了一个高阶组件，被高阶组件包裹的子组件会收到路由信息。
    - Vue中，许多第三方库都是插件，利用内置的插件系统，通过Vue.use的方法将库挂载到Vue的原型对象上，供所有组件和VM实例使用。
 
-   
+### 7.computed和watch
 
-   
+computed和watch都是以Vue的依赖追踪机制为基础的，想实现这么一个目标，当某个数据发生变化时，依赖这个数据的相关数据自动发生变化。
 
-   
+#### 不同点：
+
+1. 性质：computed是依赖别的属性计算而来的属性，使用上和data中的数据是一样的。watch是类似监听机制+事件机制，事件机制使得watch能实现的事情更复杂， 比如异步获取数据。
+2. 擅长处理的场景：computed擅长处理一个数据受多个数据影响的场景。watch的监听和事件机制使得它擅长处理一个数据影响多个数据。
+3. 控制粒度不同：computed中使用到的数据都会被监听，而watch得定义监听哪一个数据。
+4. 举例：项目的表当中，例如统计，页数这种从已有数据生成的新数据。用watch就很方便，侧重点在于属性。项目中的语言变量，主题色变量就用watch监听，因为这个变量的改变会触发一系列事情，例如依赖数据的更新，发送新的异步请求。
+
+### 8. v-bind和v-model区别
+
+v-bind和v-model都是vue中绑定数据的指令，一个用于绑定数据、属性、表达式，一个用于表单中双向数据绑定。
+
+#### 不同点：
+
+1. v-model一般用于表单中使用，属于双向数据绑定。可以绑定text、checkbox、select、radio等。
+2. v-model可以增加lazy、number、trim等修饰符对回调函数做一些事情。
+3. v-bind一般用于绑定文本、属性、表达式，属于单项绑定。
+
+### 9. vue通信方式
+
+#### 父子组件通信
+
+1. props和$emit自定义事件回调。
+2. $children属性和`\$parent属性获取父子组件的实例对象，然后就可以传值
+3. ref引用，通过ref引用获取组件实例然后传值。
+4. 事件总线EventBus，通过公共的时间总线来传值。
+5. provide注入数据、inject获取数据。
+6. Vuex公共状态管理
+
+#### 兄弟组件传值
+
+1. Vuex公共状态管理
+2. EventBus
+
+#### 祖孙组件之间
+
+1. EventBus
+2. $attrs和\$listener用于祖孙之间传递不作为props的属性和回调函数
+3. provide注入数据、inject获取数据。
+4. Vuex
 
 ### 1. 项目难点：歌词解析插件和歌词滚动
 
@@ -3242,7 +3609,7 @@ https://interview2.poetries.top/docs/excellent.html#_31-1-udp
    4. 借助拥塞处理算法（慢开始、拥塞避免、快重传、快恢复）防止过多的数据拥塞网络，避免出现网络负载过大的情况。
 
 3. 相对低效：
-   1. 需要借助各种机制和算法来包装数据有序到达，所以效率低
+   1. 需要借助各种机制和算法来保证数据有序到达，所以效率低
    2. TCP头部开销UDP大，传输效率低。
 4. 单一的传输方式：一对一的传输方式。
 
