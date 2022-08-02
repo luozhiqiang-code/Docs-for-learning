@@ -939,6 +939,45 @@ div2.dispatchEvent(ev);
 
 ```
 
+### 22 深拷贝
+
+#### 浅拷贝（拷贝第一层）
+
+1. 数组和类数组利用Array.slice()、Array.concat()。
+2. 利用Object.assign({},{a:1,b:2})。
+3. 展开运算符号
+
+#### 深拷贝（完全拷贝）
+
+1. JSON.parse(JSON.stringify(obj));
+
+   - 无法实现对函数、RegExp等特殊对象的拷贝
+   - 会抛弃对象的constructor，所有构造函数指向Object
+   - 如果有循环应用会出错
+
+2. 递归，后续遍历实现一个深拷贝。
+
+   - 用map解决循环引用的问题
+
+   - 用instancesof或Object.prototype.toString.call(obj)来分辨引用类型
+
+   - 用克隆对象的构造器来得到一个新的初始对象保证不丢失原型
+
+   - 对于Map、Set、Array、Object等可以递归遍历的引用类下则递归处理
+
+     - Map：`cloneTarget.set(deepClone(key, map), deepClone(item, map));`
+     - Set：` cloneTarget.add(deepClone(item, map));`
+     - Array、Object：`cloneTarget[prop] = deepClone(target[prop], map);`
+
+   - 对于Boolean、Number、String、Symbol、Error、Date、RegExp、Function这类不能遍历的引用类型用特殊方法处理
+
+     - Boolean、Number、String、Symbol：`new Object(Boolean.prototype.valueOf.call(target)); `
+     - Error、Date：`new Ctor(target);`
+     - RegExp：`const { source, flags } = target;   new target.constructor(source, flags);`
+     - Function：toString获取函数字符串，然后正则解析出函数体和参数传入构造函数Funtion得到函数对象。或者eval直接执行。
+
+     
+
 ## 浏览器
 
 ### 1.跨域原理
@@ -1592,7 +1631,9 @@ requestAnimationFrame在每一帧必定会执行，执行次数随屏幕刷新�
 3. 和定时器相比，requestAnimationFrame执行的次数和时机是根据刷新率自适应的，从而可以实现更流畅的动画。用定时器的最大问题是执行的实际是不固定的，可能刚好在帧末位或者直接不执行，或者多个任务叠加到一个帧内执行，导致页面卡顿闪现。
 4. 如果requestAnimationFrame内的要执行太多任务还是会导致卡顿，只是能保证执行间隔和屏幕刷新率保持一致。
 
+### 16. 浏览器安全
 
+1. 
 
 ## HTTP
 
@@ -2175,7 +2216,43 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 3. 执行Render字符串，也就是执行Render函数渲染VDOM。此时执行render函数读取传入的参数会触发数据的Getter函数，然后开始依赖收集，目的就是将观察者Watcher对象存放到订阅者Dep的Subs中。**那么后续触发页面事件修改监听的对象时，就会触发setter函数**，setter中就会通知依赖收集得到的Dep中的每一个Watcher，然Watcher调用update更新视图。
 4. 调用update更新视图不是简单的直接更新，会通过DIff算法求出新旧节点中变化的部分，然后封装为更新任务，添加到更新队列中，等待下一个tick时更新任务，并且这个更新是异步的，更新队列只能添加不同ID的任务，也就是同一个对象的属性只读取一次变化。
 
-## 项目1：播放器
+### 6. Vue和React的异同
+
+#### 相同之处
+
+1. 使用VDOM来表示DOM，使得程序员可以以声明式来操控DOM，通过操控数据来操控DOM。
+2. VDOM和diff算法将更新粒度降低，提供了一定的性能上的提升。
+3. 用VDOM表示DOM，提供了跨平台的能力，web应用上是VDOM对DOM的隐射，移动端就是VDOM对移动端原生组件的映射，服务端则是VDOM对于DOM字符串的隐射。
+
+#### 不同之处
+
+1. 定义：一个是库，一个是框架。
+
+   - 作为库React只提供了DOM操作，组件架构和状态管理等核心部分，其余的都交给社区。好处就是给开发人员提供了很大的自由度，坏处就是对于初学者来说选择最佳实践比较困难。
+   - 作为框架Vue提供了DOM核心部分、许多语法糖、插件系统、内置质量、转换等，并且还提供了路由vue-router和状态管理Vuex等配套库和工具。
+
+2. 数据改变与UI更新的机制。
+
+   - 灵活性、数据可预测：React提倡函数是编程的风格，例如高阶函数、不变性、纯函数等，其背后的理念就是保持状态不变，当试图改变状态对象的时候不会触发重新渲染，**要触发重新渲染必须调用setState方法**。这不仅会更新组件，还会更新整个组件的子树。所以可以使用PureComponent、shouldComponentUpdate、React.Memo、useCallback、useMemo等方法来控制渲染过程。这种灵活性带来的代价就是所有优化要手动完成、使得数据可预测。总而言之，React给开发人员提供了对重渲染过程中的大量控制，使得数据可预测，操作更灵活。
+   - 相对不灵活、框架提供性能优化：Vue的核心就是数据模型，状态在数据对象中存储和表示，与React相反的是，Vue状态对象的改变会触发重新渲染。状态对象和视图是双向绑定的，对象的任何变化都会反应到视图中，同样视图的变化也会反应到对象中。这种数据的双向绑定使得程序员不需要去手动控制渲染过程和手动优化。
+
+3. 模板和样式：模板和样式会很大程度影响代码的设计。
+
+   - React很大程度依赖于函数式编程，写react代码就是在写JavaScript函数。所以代码逻辑和html标签被视为一个整体，因此是混合的，是通过JSX来实现的。JSX本质是就是**React.createElement**的语法糖，用于创建DOM实体。
+   - 因为React中JavaScript代码逻辑和HTML标签是混合的，所以在样式提供了inline-style和styled-components还有css-in-js。
+   - Vue对于模板采用了更保守的方式，与逻辑分离的方式。将标签标示为和html看起来一样的模板，并且提供了语法糖例如条件和迭代。这使得Vue开发更像原生HTML开发，也是Vue的渐进式框架的基础。用Vue重构老的项目可以更好的复用原来的代码和逻辑。
+   - Vue的处理样式的方式也是分离的，可以再延时标签中编写纯CSS，通过添加scoped属性可以将css的作用域限制在组件级别。其内部原理是React送的CSS-in-JS类似，一个是随机类名，一个是随机属性名。
+
+4. 可扩展性
+
+   - React中大多数组件都是用来增强现有组件的高阶组件，例如react-redux就是利用了Context API并暴露了一个高阶组件，被高阶组件包裹的子组件会收到路由信息。
+   - Vue中，许多第三方库都是插件，利用内置的插件系统，通过Vue.use的方法将库挂载到Vue的原型对象上，供所有组件和VM实例使用。
+
+   
+
+   
+
+   
 
 ### 1. 项目难点：歌词解析插件和歌词滚动
 
