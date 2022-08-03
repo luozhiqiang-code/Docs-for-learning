@@ -172,7 +172,7 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 #### 绝对定位
 
 1. 子绝父相
-2. 子绝，父为最近的非static。如果没有，则将页面第一屏作为初始定位块。
+2. 子绝，父为最近的非static。如果没有，则将页面第一屏body作为初始定位块。
 
 #### 固定定位
 
@@ -421,6 +421,242 @@ animation：动画名 持续时间 时序函数 延迟时间 迭代次数 动画
 from{ transform:rotate(0deg)}
 to{transform:rotate(360deg)}
 }
+```
+
+### 17 三栏布局
+
+#### 1.浮动布局
+
+首先，三个元素顺序依次是left、right、main。中间的元素要放最后，因为前面两个元素浮动后会脱离文档流，空出位置给main。
+
+```html
+    <div class="left"></div>
+    <div class="right"></div>
+    <div class="main"></div>
+```
+
+然后左侧元素左浮动，右侧元素右浮动，中间的元素设置margin为左右两个元素的宽度，宽度自适应。
+
+```css
+      .main {
+        margin: 0 200px;
+      }
+      .left {
+        float: left;
+      }
+      .right {
+        float: right;
+      }
+```
+
+#### 2.定位布局
+
+main元素可以提前，因为绝对定位会脱离文档流。
+
+```html
+    <!-- 可以把Main提前，使主要内容可以优先加载 -->
+    <div class="main">Main</div>
+    <div class="left">Left</div>
+    <div class="right">Right</div>
+```
+
+然后将左右两个元素贴边，中间的元素设置margin为左右两个元素的宽度，宽度自适应。
+
+```3.
+        .left {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .right {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .main {
+            margin: 0 200px;
+        }
+```
+
+#### 3.flex布局
+
+给三个元素外添加一个弹性容器。
+
+弹性容器设置display：flex，然后给中间的子元素设置增长因子、缩减因子为1，弹性基准为auto。
+
+此外还可以通过设置order属性来使得main最先加载。
+
+```html
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .main {
+            flex: 1;
+            /* flex: 1 1 auto; */
+        }
+    </style>
+
+    <div class="container">
+        <div class="left">Left</div>
+        <div class="main">Main</div>
+        <div class="right">Right</div>
+    </div>
+```
+
+#### 4.表格布局
+
+给三个元素外添加一个表格容器。
+
+表格容器设置display：table，然后给表格元素设置display：table-cell。无需给中间的main元素设置，表格容器内剩余的空间会分配给中间的容器，达到自适应。
+
+```html
+    <style>
+        .container {
+            display: table;
+            width: 100%;
+        }
+
+        .container>div {
+            display: table-cell;
+        }
+    </style>
+
+    <div class="container">
+        <div class="left">Left</div>
+        <div class="main">Main</div>
+        <div class="right">Right</div>
+    </div>
+```
+
+#### 5.网格布局
+
+给三个元素外添加一个网格容器。
+
+网格容器设置display：girder，grid-template-columns：200px auto(1fr) 200px；
+
+此外还可以通过设置order属性来使得main最先加载。
+
+```html
+    <style>
+        .container {
+            display: grid;
+            width: 100%;
+            grid-template-columns: 200px auto 200px;
+        }
+    </style>
+
+    <div class="container">
+        <div class="left">Left</div>
+        <div class="main">Main</div>
+        <div class="right">Right</div>
+    </div>
+```
+
+#### 6.calc函数布局
+
+三个元素全部左浮动，然后利用calc函数给中间的元素计算宽度。
+
+```html
+<style>
+    .container {
+        width: 100%;
+    }
+    .container>div {
+        float: left;
+    }
+    .main {
+        width: calc(100% - 400px);注意运算符前后要有空格！！！
+    }
+</style>
+<div class="container">
+    <div class="left">Left</div>
+    <div class="main">Main</div>
+    <div class="right">Right</div>
+</div>
+```
+
+#### 7.圣杯布局
+
+利用浮动、相对定位、负边距来实现三栏自适应，且第一个加载main元素。
+
+```html
+<div class="container">
+      <div class="main"></div>
+      <div class="left"></div>
+      <div class="right"></div>
+    </div> 
+```
+
+给三个元素加一个容器，容器设置内边距来压缩空间留给左右两个元素（这里不能给main元素设置外边距来压缩空间，因为其宽度已经是100%）。
+
+三个元素通通左浮动，通过负边距将后面两个元素拉到中间的main元素内部两侧。
+
+最后通过相对定位将左右两个元素拉到空余位置，我就说main元素外部两侧。
+
+```css
+ .container {
+        padding: 0 200px;
+      }
+      .main {
+        float: left;
+        width: 100%;
+      }
+      .left {
+        float: left;
+        margin-left: -100%;
+
+        position: relative;
+        left: -200px;
+      }
+      .right {
+        float: left;
+        margin-left: -200px;
+        position: relative;
+        right: -200px;
+      } 
+```
+
+8.双飞翼布局
+
+利用浮动、正边距、负边距来实现三栏自适应，且第一个加载main元素，和圣杯布局的区别在于给main元素加了一个包裹元素，通过包裹元素的正边距压缩空间给左右两侧的元素。
+
+```html
+    <div class="container">
+      <div class="wrapper">
+        <div class="main"></div>
+      </div>
+      <div class="left"></div>
+      <div class="right"></div>
+    </div>
+```
+
+三个元素通通左浮动，通过负边距将后面两个元素拉到中间的包裹元素内部两侧。
+
+最后通过正边距将main元素的宽度压缩为中间的宽度，否则是100%。
+
+```css
+      .container {
+        width: 100%;
+      }
+      .wrapper {
+        float: left;
+        width: 100%;
+      }
+      .main {
+        margin: 0 200px;
+      }
+      .left {
+        float: left;
+        margin-left: -100%;
+      }
+      .right {
+        float: left;
+        margin-left: -200px;
+      }
 ```
 
 ## HTML
@@ -772,9 +1008,9 @@ https://interview2.poetries.top/fe-base-docs/browser/part2/lesson09.html#javascr
 
 ### 13. JS数据类型
 
-基本数据类型：string、number、bool、null、undefine
+基本数据类型：string、number、bool、null、undefine、Symbol(ES6)。
 
-引用数据类型：Object、Function、Array、Date、RegExp、基本类型的包装类型（Bool、String、Number）
+引用数据类型：Object、Function、Array、Date、RegExp、基本类型的包装类型（Bool、String、Number）、Proxy、Reflect、Map、WeakMap、Set、WeakSet、Error。
 
 区别：
 
@@ -1179,9 +1415,22 @@ str += “two”
 跨域的方法：
 
 1. iframe设置domain：网页a(URL http://a.com/foo)里面设置一个iframe元素，元素的src为http://b.a.com/bar。然后在网页b(http://b.a.com/bar)中设置domain为上级域名a.com就可以实现跨域了
+
 2. 有src属性或者href的标签可以跨域获取资源：比如img、script、audio、video、link等；
+
 3. 常用的就是jsonp：先设置一个script标签，里面定义一个函数fn。再设置一个script标签，src中携带query参数callback=fn。然后后端收到了请求，解析出参数中的fn，通过拼接字符串传入参数返回。然后第二个script收到返回的数据执行了带参数的函数。
+
+   - 优点：script标签基本上所有浏览器都支持，所以jsonp兼容性好，不需要XMLHttpRequest就可以发送请求。
+
+   - 缺点：
+
+     1. 带src的标签都只支持get请求不支持其它类型。
+
+     2. 调用失败不会返回HTTP状态码。
+     3. 安全性差，必须保证提供jsonp服务器是可靠的，如果服务器存在漏洞，那么所有调用该jsonp的网站都遭遇。比如提供jsonp的服务可以注入恶意代码。
+
 4. 设置http头里面的字段Access-Control-Allow-Origin为同源url或者通配符；
+
 5. 反向代理：跨域主要是浏览器接受数据有限制，服务器和服务器之间不跨域。给前端设置一个代理服务器，前端的请求转发到后端，然后再将后端的响应转发前端，代理服务器会将响应头的域名设置与前端同源；
 
 ### 2.浏览器存储
@@ -1195,7 +1444,63 @@ str += “two”
 
 cookie、sessionStorage、localStorage使用方法，见代码；
 
-cookie的属性：name, value, expires, path, domain, secure，httpOnly。
+cookie的属性：name, value, expires, path, domain, secure，httpOnly，sameSite。
+
+#### 应用场景
+
+cookie：与浏览器进行交互，作为http规范的一部分存在，所以cookie常用来记录用户登录信息，这样下次用户访问就不需要在输入账户名密码。cookie还可以用来保存保存用户访问信息，方便更好的个性化服务。
+
+localStorage和sessionStorage都是webStorage的实例，webStorage是为了本地存储数据诞生的。所以localStorage可用于本地持久化存储，用于存储应用数据，比如应用的国际化、主题、菜单数据等应用数据。而sessionStorage用于本地存储会话信息，例如前一个页面获取的数据需要在后一个页面提交就可以存到sessionStorage。
+
+#### document.cookie的使用
+
+```js
+//'BT=1641367989237; c_dl_rid=1653616816342_952926; c_dsid=11_1654757951074.011089'
+var CookieUtil = {
+  // 1.找到cookie中name的开始下标和结束的分号的下标
+  // 2.然后从中分割出value
+  get: function (name) {
+    let cookieName = encodeURI(name) + "=",
+      cookieStart = document.cookie.indexOf(cookieName),
+      cookieValue = null;
+    if (cookieStart > -1) {
+      let cookieEnd = document.cookie.indexOf(";", cookieStart);
+      //对于最后一个cookie结尾没有";"
+      if (cookieEnd === -1) {
+        cookieEnd = document.cookie.length;
+      }
+      cookieValue = decodeURI(
+        document.cookie.slice(cookieStart + cookieName.length, cookieEnd)
+      );
+      return cookieValue;
+    }
+  },
+  // 1.将name和value编码
+  // 2.拼接传入来的参数
+  // 3.直接给document.cookie赋值就可以完成设置
+  set: function (name, value, expires, path, domain, secure) {
+    let cookieText = encodeURI(name) + "=" + encodeURI(value);
+    if (expires) {
+      cookieText += ";expires=" + expires.toGMTString();
+    }
+    if (path) {
+      cookieText += ";path=" + path;
+    }
+    if (domain) {
+      cookieText += ";domain=" + domain;
+    }
+    if (secure) {
+      cookieText += ";secure=" + secure;
+    }
+    document.cookie = cookieText;
+  },
+  // 1.将expire设置为Date（0）也就是当前时间，就可以删除cookie
+  unset: function (name, path, domain, secure) {
+    this.set(name, "", new Date(0), path, domain, secure);
+  },
+};
+
+```
 
 问题描述：在实际的应用场景中, 我们往往需要让localStorage 设置的某个 「key」 能在指定时间内自动失效, 所以基于这种场景, 我们如何去解决呢?
 1. 初级解法
@@ -1339,7 +1644,7 @@ https://interview2.poetries.top/days/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98.html#%
 - 优化关键字节数（缩小、压缩）来减少下载时间 优化加载剩余关键资源的顺序:
 - 让关键资源（`CSS`）尽早下载以减少 `CRP` 长度
 
-### 5.协商缓存和强制缓存
+### 5.协商缓存和强制缓存（*）
 
 #### 强制缓存
 
@@ -1370,7 +1675,23 @@ if-none-match（请求）、e-tag（响应）
 
 优点：解决了last-modefied的两个问题，时效性更高。
 
-缺点：如果后端负载均衡，用多服务器存储文件，那么每个服务器的返回的e-tag是不一样的，要实现e-tag同步就和实现session同步一样麻烦。
+缺点：
+
+1. 如果后端负载均衡，用多服务器存储文件，那么每个服务器的返回的e-tag是不一样的，要实现e-tag同步就和实现session同步一样麻烦。
+2. 性能上etag更差，毕竟etag需要每次计算哈希值。
+
+#### 浏览器缓存过程
+
+1. 浏览器第一次加载资源，服务器返回200，浏览器将资源文件从服务器上请求下载下来，并把response header及该请求的返回时间一并缓存；
+2. 下一次加载资源时，先比较当前时间和上一次返回200时的时间差，如果没有超过cache-control设置的max-age，则没有过期，命中强缓存，不发请求直接从本地缓存读取该文件（如果浏览器不支持HTTP1.1，则用expires判断是否过期）；如果时间过期，则向服务器发送header带有If-None-Match和If-Modified-Since的请求；
+3. 服务器收到请求后，优先根据Etag的值判断被请求的文件有没有做修改，Etag值一致则没有修改，命中协商缓存，返回304；如果不一致则有改动，直接返回新的资源文件带上新的Etag值并返回200；
+4. 如果服务器收到的请求没有Etag值，则将If-Modified-Since和被请求文件的最后修改时间做比对，一致则命中协商缓存，返回304；不一致则返回新的last-modified和文件并返回200；
+
+#### 浏览器缓存控制
+
+1. 地址栏访问，链接跳转是正常用户行为，将会触发浏览器缓存机制；
+2. F5刷新，浏览器会设置max-age=0，跳过强缓存判断，会进行协商缓存判断；
+3. ctrl+F5刷新，跳过强缓存和协商缓存，直接从服务器拉取资源。
 
 ####  缓存场景
 
@@ -1383,6 +1704,8 @@ if-none-match（请求）、e-tag（响应）
 - 对于代码文件来说，这里特指除了 `HTML` 外的代码文件，因为 `HTML` 文件一般不缓存或者缓存时间很短。
 
   一般来说，现在都会使用工具来打包代码，那么我们就可以对文件名进行哈希处理，只有当代码修改后才会生成新的文件名。基于此，我们就可以给代码文件设置缓存有效期一年 `Cache-Control: max-age=31536000`，这样只有当 `HTML` 文件中引入的文件名发生了改变才会去下载最新的代码文件，否则就一直使用缓存
+
+https://segmentfault.com/a/1190000008547416
 
 ### 6.cookie、session、jwt、sso单点登录、OAuth机制
 
@@ -2588,6 +2911,16 @@ computed和watch都是以Vue的依赖追踪机制为基础的，想实现这么�
 3. 控制粒度不同：computed中使用到的数据都会被监听，而watch得定义监听哪一个数据。
 4. 举例：项目的表当中，例如统计，页数这种从已有数据生成的新数据。用watch就很方便，侧重点在于属性。项目中的语言变量，主题色变量就用watch监听，因为这个变量的改变会触发一系列事情，例如依赖数据的更新，发送新的异步请求。
 
+#### 8. computed和method
+
+computed和method都可以执行，并返回值。
+
+#### 不同的
+
+1. computed侧重点是属性访问，而methods是函数调用，一般是作为事件的回调函数来用的。
+2. computed具有缓存功能，computed中的值在依赖的属性发生改变后才会调用，得到的值会被缓存起来，用法和Date中的数据一样，之所以区分开是防止文本插值中逻辑过重不便维护。而method不能缓存，如果页面有100出调用computed和method，computed只会执行一次，后续都是缓存。而method会执行100次，得到返回值。
+3. 调用方式不同，computed写函数名即可，而method是方法，必须调用才能返回值，直接写方法名返回的是function字符串。
+
 ### 8. v-bind和v-model区别
 
 v-bind和v-model都是vue中绑定数据的指令，一个用于绑定数据、属性、表达式，一个用于表单中双向数据绑定。
@@ -3544,7 +3877,7 @@ $.ajax({
 3. 当进程获得部分资源，得不到其它资源时，释放已有资源。（破坏不剥夺）
 4. 资源有序分配，破坏环形链。
 
-### 2.进程和线程
+### 2.进程和线程（*）
 
 进程：进程是CPU资源分配的最小单位，是能拥有资源和独立运行的最小单位。
 
@@ -3580,7 +3913,7 @@ $.ajax({
 
 https://javaguide.cn/cs-basics/network/osi&tcp-ip-model.html#osi-%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B
 
-### 2.tcp和udp
+### 2.tcp和udp（*）
 
 https://interview2.poetries.top/docs/excellent.html#_31-1-udp
 
@@ -3606,7 +3939,7 @@ https://interview2.poetries.top/docs/excellent.html#_31-1-udp
    1. 通过三次握手建立连接，四次挥手断开连接，保证了数据传输的可靠。
    2. 借助ARQ(Automatic Repeat-reQuest)自动重传协议，保证了数据丢失后能重传
    3. 借助滑动窗口机制保证接受方来得及接受数据，数据能够有序到达。
-   4. 借助拥塞处理算法（慢开始、拥塞避免、快重传、快恢复）防止过多的数据拥塞网络，避免出现网络负载过大的情况。
+   4. 借助拥塞处理算法（慢开始、拥塞避免、快重传、快恢复）防止过多的数据拥塞网络，避免出现网络负载过大、数据包丢失的情况。
 
 3. 相对低效：
    1. 需要借助各种机制和算法来保证数据有序到达，所以效率低
