@@ -395,9 +395,9 @@ useLayoutEffect 和 useEffect 不同的地方是采用了同步执行，那么�
 
 react路由有两种方式，hash和history路由。
 
-以history路由为例，当url改变，首先触发history相关的事件popstate，触发回调函数。回调函数中会调用setstate更新location路由信息，然后在Router组件通过context传递给route组件匹配，匹配的route组件会渲染对应的组件。
+**链接式：**以history路由为例，当url改变，首先触发history相关的事件popstate，触发回调函数。回调函数中会调用setstate更新location路由信息，然后在Router组件通过context传递给route组件匹配，匹配的route组件会渲染对应的组件。
 
-如果是调用history.push来改变路由，实际上就是调用window.history.pushState改变url，同时不刷新页面。然后调用setState，后续流程相同。
+**编程式路由：**如果是调用history.push来改变路由，实际上就是调用window.history.pushState改变url，同时不刷新页面。然后调用setState，后续流程相同。
 
 hash路由原理也一样，只是路由改变调用的接口是window.location.hash，触发的事件是hashchange。
 

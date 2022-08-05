@@ -186,7 +186,7 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 
 设置为sticky的元素，偏移属性用来定义相对容纳块的粘滞定位移动区域。
 
-### 8. 重排与重绘
+### 8. 重排与重绘（*）
 
 <img src="images/image-20220704113218584.png" alt="image-20220704113218584" style="zoom:80%;" />
 
@@ -203,13 +203,13 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 
 #### 重排
 
-通过JavaScript或者css修改元素几何位置属性，例如改变宽高等，那么浏览器回触发重新布局，解析之后的一系列子过程，这个过程就叫做重排，重排需要更新整个流水线从计算布局到最后的渲染的整个过程，所以重排开销很大。
+通过JavaScript或者css修改元素几何位置属性，例如改变宽高等，那么浏览器会触发重新布局，解析之后的一系列子过程，这个过程就叫做重排，重排需要更新整个流水线从计算布局到最后的渲染的整个过程，所以重排开销很大。
 
 <img src="images/202203011656077.png" alt="img" style="zoom: 67%;" />
 
 #### 重绘
 
-通过JavaScript或者css修改元素的外观，比如背景色和边框字体颜色。那么布局阶段不会执行，而直接冲绘制阶段开始，执行之后的一系列子过程，这个过程就叫重绘。相比于重排，重绘省去了布局和分层阶段，开销更小。
+通过JavaScript或者css修改元素的外观，比如背景色和边框字体颜色。那么布局阶段不会执行，而直接从绘制阶段开始，执行之后的一系列子过程，这个过程就叫重绘。相比于重排，重绘省去了布局和分层阶段，开销更小。
 
 ![img](images/202203011656382.png)
 
@@ -221,24 +221,25 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 
 **引发重排**：
 
-1. 添加、删除可见的dom
+1. 添加、删除可见的dom，display：none。
 2. 元素的位置改变（left、right、top、bottom），元素的尺寸改变(margin、padding、width、height)。
-3. 元素style信息的获取（width/height、offsetTop/Left/Right/Bottom、offsetWidth/Height、scrollTop/Left/Width/Height、clientTop/Left/Width/Height）
+3. 元素几何信息的获取（width/height、offsetTop/Left/Right/Bottom、offsetWidth/Height、scrollTop/Left/Width/Height、clientTop/Left/Width/Height）
 4. 页面渲染初始化，浏览器窗口尺寸改变
 5. 获取一些属性包括：offsetTop、offsetLeft、  offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight、getComputedStyle() 
 
 **引发重绘：**
 
-1. 修改元素与颜色相关的属性，例如元素的颜色、背景（background-color、font-color、border-color、outline等）
+1. 修改元素与颜色相关的属性，例如元素的颜色、背景（background-color、font-color、border-color、outline等）、让元素消失但是留下位置的visibility：hidden。
 
 **减少重绘和重排**：
 
-1. 需要多次修改的样式不要一条一条修改，可以通过实现定义样式，通过修改class类应用样式。
-2. 不要把DOM节点的属性值放到循环里面当循环的变量，可以用变量来保存这个属性值。
+1. 需要多次修改的样式不要一条一条修改，可以通过事先定义好样式，通过修改class类应用样式。
+2. 不要把DOM节点引发重排的属性值放到循环里面当循环的变量，可以用变量来保存这个属性值。
 3. 除非不得已，不要使用table布局，table布局一个小改动会影响这个布局，开销极大。
 4. 如果需要插入多个DOM元素，可以通过创建documentFragment一次插入，或者innerHtml插入。
 5. 对于需要多次重排的元素，设置position定位使其脱离文档流，从而不会影响别的元素，例如实现动画。
 6. 多次操作一个元素是可以先display：none隐藏，是元素不在渲染树，待操作完成后再展示。
+7. 使用css实现动画或者过渡，css实现的动画只在合成线程执行，不占用主线程且有cpu加速。同理，可以设置CSS属性开启GPU加速：transform、opacity、filter、will-change
 
 ### 9. 盒模型
 
@@ -658,6 +659,68 @@ main元素可以提前，因为绝对定位会脱离文档流。
         margin-left: -200px;
       }
 ```
+
+### 18. 什么是BFC
+
+BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
+
+**创建方式：**
+
+- 浮动属性float
+- 定位属性position：absolute、fixed，relative，static等
+- 行内快inline-block
+- 表格单元diaplay: table这类属性table-cell、table-caption
+- 弹性盒子：display：flex，inline-flex
+- overflow：非visible（wrap）
+
+#### BFC的渲染规则是什么
+
+- BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
+- 计算BFC的高度时，浮动子元素也参与计算（即内部有浮动元素时也不会发生高度塌陷）
+- BFC的区域不会与float的元素区域重叠
+- BFC内部的元素会在垂直方向上放置
+- BFC内部两个相邻元素的margin会发生重叠
+
+####  BFC的应用场景
+
+- **清除浮动**：BFC内部的浮动元素会参与高度计算，因此可用于清除浮动，防止高度塌陷
+- **避免某元素被浮动元素覆盖**：BFC的区域不会与浮动元素的区域重叠
+- **阻止外边距重叠**：属于同一个BFC的两个相邻Box的margin会发生折叠，不同BFC不会发生折叠
+- 创建各种自适应布局：比如圣杯布局，双飞翼布局，自适应两三栏布局。
+
+### 19. 行内格式上下文
+
+**概念：**内部的环境表现为行内格式。
+
+**布局规则**：
+
+- 内部的box会在水平方向一个一个堆叠。
+- box之间只有水平方向的边距、边框、填充有效果。
+- 对齐方式：以底部、顶部、基线对其。
+
+### 20. 层叠上下文
+
+元素提升为一个比较特殊的图层，在三维空间中 (z轴) 高出普通元素一等。
+
+**触发条件**
+
+- 根层叠上下文(`html`)
+- `position`
+- css3属性
+  - `flex`
+  - `transform`
+  - `opacity`
+  - `filter`
+  - `will-change`
+  - `webkit-overflow-scrolling`
+
+**层叠等级：层叠上下文在z轴上的排序**
+
+- 在同一层叠上下文中，层叠等级才有意义
+
+- `z-index`的优先级最高
+
+  <img src="https://s.poetries.work/gitee/2020/09/111.png" alt="img" style="zoom: 33%;" />
 
 ## HTML
 
@@ -1568,7 +1631,7 @@ https://interview2.poetries.top/days/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98.html#%
 
 3.网络进程收到URL请求后检查本地是否缓存了该请求，如果有则返回没有则向服务器发起请求。本次的缓存是强制缓存。强制缓存可以通过设置HTTP header中的字段expire（Wed, 22 Oct 2018 08:41:00 GMT）和chache-Control（max-age=300）实现。
 
-4.如果缓存不存在则向服务器发起http请求，http协议是建立在tcp协议之上的，所以要先建立tcp链接，要建立tcp链接得先获得服务器的IP地址。
+4.如果缓存不存在则向服务器发起http请求，http协议是建立在tcp协议之上的，所以要先建立tcp连接，要建立tcp链接得先获得服务器的IP地址。
 
 通过dns解析出服务器的IP地址，递归查询本地dns，首先检查浏览器缓存，然后检查本机的hosts文件，然后检查本地dns解析器缓存，然后检查本地dns服务器。如果上述过程没有查到，那么迭代查询更高级的dns服务器，首先查询根域名服务器，然后查询顶级域名服务器，最后是权威域名服务器。
 
@@ -1601,6 +1664,7 @@ https://interview2.poetries.top/days/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98.html#%
 ![img](images/21.png)
 
 4. 在渲染树的基础上进行布局，计算每个节点的几何结构，计算position、overflow、z-index等。
+4. 进行绘制
 
 14.GPU进程开始工作，合成图层绘制到屏幕上。
 
