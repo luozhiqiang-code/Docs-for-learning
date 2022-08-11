@@ -666,18 +666,19 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 
 **创建方式：**
 
-- 浮动属性float
-- 定位属性position：absolute、fixed，relative，static等
-- 行内快inline-block
+- 浮动属性float不为none
+- 定位属性position：absolute、fixed（非static和relative以外）等
+- 行内块inline-block
 - 表格单元diaplay: table这类属性table-cell、table-caption
 - 弹性盒子：display：flex，inline-flex
 - overflow：非visible（wrap）
+- IE：Layout，通过zoom:1
 
 #### BFC的渲染规则是什么
 
 - BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
 - 计算BFC的高度时，浮动子元素也参与计算（即内部有浮动元素时也不会发生高度塌陷）
-- BFC的区域不会与float的元素区域重叠
+- BFC的中的区域不会与别的float的元素区域重叠
 - BFC内部的元素会在垂直方向上放置
 - BFC内部两个相邻元素的margin会发生重叠
 
@@ -1255,12 +1256,12 @@ div2.dispatchEvent(ev);
 1. JSON.parse(JSON.stringify(obj));
    - 无法实现对函数、RegExp等特殊对象的拷贝
    - 会抛弃对象的constructor，所有构造函数指向Object
-   - 如果有循环应用会出错
+   - 如果有循环引用会出错
 2. 递归，后续遍历实现一个深拷贝。
    - 用map解决循环引用的问题
    - 用instancesof或Object.prototype.toString.call(obj)来分辨引用类型
    - 用克隆对象的构造器来得到一个新的初始对象保证不丢失原型
-   - 对于Map、Set、Array、Object等可以递归遍历的引用类下则递归处理
+   - 对于Map、Set、Array、Object等可以递归遍历的类下则递归处理
      - Map：`cloneTarget.set(deepClone(key, map), deepClone(item, map));`
      - Set：` cloneTarget.add(deepClone(item, map));`
      - Array、Object：`cloneTarget[prop] = deepClone(target[prop], map);`
@@ -1958,7 +1959,7 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 5. [`Promise.reject(reason)`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)：返回一个状态为拒绝的Promise对象。
 6. [`Promise.resolve(value)`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)：如果传入的参数是一个值，则以返回value为该值的resolve的Promise对象，如果传入的参数是一个Promise对象，则直接返回，如果传入的参数是thenable，则返回一个以thenable结果为值的Promise对象。
 
-Promise的判断：鸭子类型，看起来走起来是鸭子那就是鸭子，也就是可以调用then和catch方法那就是Promise。
+**Promise的判断**：鸭子类型，看起来走起来是鸭子那就是鸭子，也就是可以调用then和catch方法那就是Promise。
 
 ### 10. async await 使用同步的方式写异步代码
 
@@ -2466,7 +2467,7 @@ export const transformIf = createStructuralDirectiveTransform(
 
 ### 4. HTTP和HTTPS区别
 
-**HTTPS：**HTTPS 要比 HTTPS 多了 secure 安全性这个概念，实际上， HTTPS 并不是一个新的应用层协议，它其实就是 HTTP + TLS/SSL 协议组合而成，而安全性的保证正是 SSL/TLS 所做的工作。
+**HTTPS：**HTTPS 要比 HTTP 多了 secure 安全性这个概念，实际上， HTTPS 并不是一个新的应用层协议，它其实就是 HTTP + TLS/SSL 协议组合而成，而安全性的保证正是 SSL/TLS 所做的工作。
 
 **SSL:**安全套接层（Secure Sockets Layer）。
 
@@ -2712,21 +2713,23 @@ React使用双缓存技术来实现更新逻辑，就像canvas绘制动画的双
 
 ### 4. Diff算法（调和的具体实现）
 
-**策略1（tree层级的地diff）**：
+#### Diff算法的三个策略
 
-1. Web UI中DOM节点跨层级的操作比较少，可以忽略不计，所以对于两颗树，只比较同层级的节点。
-2. 如果新节点与旧节点不同则重新创建以该节点为根节点的整棵树，不在向下diff。
-3. 只需要遍历一遍就能完成整棵树的diff。
+如果完全对比两棵树，即使是最前沿的算法，时间复杂度也是O(n^3)，所以为了降低复杂度，Diff算法有三个更新策略。
 
-**策略2（component层级的diff）：**
+1. 只对同级元素进行`Diff`。如果一个`DOM节点`在前后两次更新中跨越了层级，那么`React`不会尝试复用他。
+2. 两个不同类型的元素会产生出不同的树。如果元素由`div`变为`p`，React会销毁`div`及其子孙节点，并新建`p`及其子孙节点。
+3. 开发者可以通过 `key prop`来暗示哪些子元素在不同的渲染下能保持稳定。
 
-1. 同类型的两个组件，则继续向下比较即可。（这里可以通过shouldComponentUpdate控制进一步diff）
-2. 不同类型的两个组件，直接更换整个组件。
+#### Diff的具体实现
 
-**策略3（element层级的diff）：**
+Diff算法的本质是对比current Fiber和当前更新调用Render得到的JSX对象，然后生成workInProgress Fiber，最后将workInProgress经过调度器scheduler的调度，添加到更新队列中，然后在对于的lane优先级中更新。
 
-1. 对于同一层级的一组节点，也就是节点数组，进行增加、删除、移动这三个操作。
-2. 所以需要给每个节点设置唯一表示的key来辅助diff判断进行何种操作
+Diff算法子节点的更新分为两类：单节点更新和多节点更新。
+
+##### 单节点更新
+
+1. 判断
 
 ### 5. 生命周期
 
@@ -3120,7 +3123,7 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
    - 灵活性、数据可预测：React提倡函数式编程的风格，例如高阶函数、不变性、纯函数等，其背后的理念就是保持状态不变，当试图改变状态对象的时候不会触发重新渲染，**要触发重新渲染必须调用setState方法**。这不仅会更新组件，还会更新整个组件的子树。所以可以使用PureComponent、shouldComponentUpdate、React.Memo、useCallback、useMemo等方法来控制渲染过程。这种灵活性带来的代价就是所有优化要手动完成、使得数据可预测。总而言之，React给开发人员提供了对重渲染过程中的大量控制，使得数据可预测，操作更灵活。
    - 相对不灵活、框架提供性能优化：Vue的核心就是数据模型，状态在数据对象中存储和表示，与React相反的是，Vue状态对象的改变会触发重新渲染。状态对象和视图是双向绑定的，对象的任何变化都会反应到视图中，同样视图的变化也会反应到对象中。这种数据的双向绑定使得程序员不需要去手动控制渲染过程和手动优化。
 3. 模板和样式：模板和样式会很大程度影响代码的设计。
-   - React很大程度依赖于函数式编程，写react代码就是在写JavaScript函数。所以代码逻辑和html标签被视为一个整体，因此是混合的，是通过JSX来实现的。JSX本质是就是**React.createElement**的语法糖，用于创建DOM实体。
+   - React很大程度依赖于函数式编程，写react代码就是在写JavaScript函数。所以代码逻辑和html标签被视为一个整体，因此是混合的，是通过JSX来实现的。JSX本质是就是**React.createElement**的语法糖，JSX返回的结果是一种数据结构，也就是React Element，用于和currentFiber对比生成workInProgress然后渲染。
    - 因为React中JavaScript代码逻辑和HTML标签是混合的，所以在样式提供了inline-style和styled-components还有css-in-js。
    - Vue对于模板采用了更保守的方式，与逻辑分离的方式。将标签表示为和html看起来一样的模板，并且提供了语法糖例如条件和迭代。这使得Vue开发更像原生HTML开发，也是Vue的渐进式框架的基础。用Vue重构老的项目可以更好的复用原来的代码和逻辑。
    - Vue的处理样式的方式也是分离的，可以再原始标签中编写纯CSS，通过添加scoped属性可以将css的作用域限制在组件级别。其内部原理是React中的CSS-in-JS类似，一个是随机类名，一个是随机属性名。
@@ -3130,7 +3133,7 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 
 #### 总结：
 
-React的函数式编程和单向数据流目的是为了代码结构更加清晰易于维护，并不是为了让开发者写更少的代码。而Vue的双向绑定使得Vue能够快速上手，但是缺点就是后期维护难以追踪数据。软件上没有十全十美没的方案，主要还是看和业务需求吧。
+React的函数式编程和单向数据流目的是为了代码结构更加清晰易于维护，并不是为了让开发者写更少的代码。而Vue的双向绑定使得Vue能够快速上手，并且分离式的结构更符合原生网页，但是缺点就是后期维护难以追踪数据。软件上没有十全十美没的方案，主要还是看和业务需求吧。
 
 ### 7.computed和watch
 
