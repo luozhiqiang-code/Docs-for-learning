@@ -5,7 +5,7 @@
 ### 1.正方形盒子九宫格排列
 
 1. flex: 设置增长因子、缩减因子为1、弹性基准为33.33%。高度也是33.33%。
-2. float:左浮动，设置子元素的宽高为33.33%。并且通过::after伪元素清楚后续浮动。
+2. float:左浮动，设置子元素的宽高为33.33%。并且通过::after伪元素清除后续浮动。
 3. grid：设置行列模板都为1fr。
 4. inline-block：子元素宽高33.33%。注意通过letter-spacing、word-spacing、font-size等消除边距，并且vertical-align对其top，否则上下有间隙。
 
@@ -31,9 +31,9 @@
 flex-flow:flex-direction flex-wrap
 flex-direction:row/row-reverse/column/column-reverse
 flex-wrap:nowrap/wrap/wrap-reverse
-justify-content:flext-start/flex-end/center/space-between/space-around/space/evenly
-align-items:flex-start/flext-end/center/baseline/strench
-align-content:flex-start/flex-end/center/space-evenly/space-between/space-around/strench
+justify-content:flext-start/flex-end/center/space-between/space-around/space-evenly
+align-items:flex-start/flext-end/center/baseline/strech
+align-content:flex-start/flex-end/center/space-evenly/space-between/space-around/strech
 ```
 
 **元素属性：**
@@ -50,7 +50,7 @@ order:5
 
 ### 4. Grid布局
 
-**概念：**给某个元素设置了display：flex，那么该容器就称为栅格容器，容器内的元素成了栅格子元素。网格分为网格线、网格轨道、网格单元、网格区域。相对于flex布局网格布局的提供了二维布局方式，可以灵活的控制两个维度上元素的布局。
+**概念：**给某个元素设置了display：flex，那么该容器就称为网格容器，容器内的元素成了网格子元素。网格分为网格线、网格轨道、网格单元、网格区域。相对于flex布局网格布局的提供了二维布局方式，可以灵活的控制两个维度上元素的布局。
 
 <img src="images/image-20220703202654397.png" alt="image-20220703202654397" style="zoom: 50%;" />
 
@@ -61,13 +61,13 @@ grid-template-rows:100px/50%/1fr repeat(3,100px/1fr 2em)
 grid-template-areas:"header hedar hedar"
                     "content content content"
                     "footer footer fotter"
-grind-row/column-gap:10px
+grid-row/column-gap:10px
 content类型表示将划分完行列后剩下的空间分配到行列周围，也就是整个行和整个列的分布（格子的对齐）
 items类型表示每个元素在网格单元中的分布（格子内的对齐）
-justify-items:flex-start/flext-end/center/baseline/strench
+justify-items:flex-start/flext-end/center/baseline/strech
 justify-content:flext-start/flex-end/center/space-between/space-around/space/evenly
-align-items:flex-start/flext-end/center/baseline/strench
-align-content:flex-start/flex-end/center/space-evenly/space-between/space-around/strench
+align-items:flex-start/flext-end/center/baseline/strech
+align-content:flex-start/flex-end/center/space-evenly/space-between/space-around/strech
 ```
 
 **元素属性：**
@@ -102,7 +102,7 @@ meta标签的content属性里包含两个选项。首先，它告诉浏览器当
 }
 在媒体查询断点中推荐使用em单位。在各大主流浏览器中，当用户缩放页面或者改变默认的字号时，只有em单位表现一致。
 
-@media(min-width:20em) and (max-width:35em){...}//与 >=20em && <=25em
+@media(min-width:20em) and (max-width:35em){...}//与 >=20em && <=35em
 @media(max-width:20em),(min-width:35em){...}//或 <=20em || >=35em
 ❑(min-height: 20em)——匹配高度大于等于20em的视口。
 ❑ (max-height: 20em)——匹配高度小于等于20em的视口。
@@ -156,7 +156,7 @@ meta标签的content属性里包含两个选项。首先，它告诉浏览器当
 - 第三级：类、伪类、属性选择器（0010）
 - 第四级：元素、伪元素选择器（0001）
 - 第五级别：关系选择器、全局选择器（0000）
-- 误解别：继承的样式
+- 无级别：继承的样式
 
 #### 3.优先级
 
@@ -176,7 +176,7 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 
 #### 固定定位
 
-将要定位的元素设置为fixed即可，不需要设定父。容纳块为视区，固定元素完全脱离标准文档流。
+将要定位的元素设置为fixed即可，不需要设定父。**容纳块为视区，固定元素完全脱离标准文档流。**
 
 #### 相对定位
 
@@ -196,10 +196,11 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 - 渲染引擎将CSS样式表转化为浏览器可以理解CSSOM。
 - 创建布局树，并计算元素的布局信息。（为了生成渲染树）
 - 对布局树进行分层，并生成分层树。（为了生成渲染树）
-- 为每个图层生成绘制列表，并将其提交到合成线程。（下面开始非主线程了）
-- 合成线程将图层分成图块，并在光栅化线程池中将图块转换成位图。
-- 合成线程发送绘制图块命令DrawQuad给浏览器进程。
-- 浏览器进程根据DrawQuad消息生成页面，并显示到显示器上
+- 绘制过程，为每个图层生成绘制列表，并将其提交到合成线程。（下面开始非主线程了）
+- 在合成线程中执行合成过程，包括生成图块，在光栅化线程池（GPU光栅化）将图块转换为位图、发送绘制图块命令给浏览器进程、浏览器进程根据命令显示画面。
+  - 合成线程将图层分成图块，并在光栅化线程池中将图块转换成位图。
+  - 合成线程发送绘制图块命令DrawQuad给浏览器进程。
+  - 浏览器进程根据DrawQuad消息生成页面，并显示到显示器上
 
 #### 重排
 
@@ -225,7 +226,7 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 2. 元素的位置改变（left、right、top、bottom），元素的尺寸改变(margin、padding、width、height)。
 3. 元素几何信息的获取（width/height、offsetTop/Left/Right/Bottom、offsetWidth/Height、scrollTop/Left/Width/Height、clientTop/Left/Width/Height）
 4. 页面渲染初始化，浏览器窗口尺寸改变
-5. 获取一些属性包括：offsetTop、offsetLeft、  offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight、getComputedStyle() 
+5. 获取一些样式包括：getComputedStyle() 
 
 **引发重绘：**
 
@@ -251,13 +252,13 @@ position用来设置元素的定位，有static、relative、absolute、fixed、
 
 width、height表示content的。
 
-![img](images/F0AB2FF8B5108D122FBB2FA6C6590556.png)
+<img src="images/F0AB2FF8B5108D122FBB2FA6C6590556.png" alt="img" style="zoom:50%;" />
 
 ####  IE盒模型
 
 width、height表示可见宽度和高度，即content+padding+border。
 
-![img](images/EA16C3388EFD2F9E6CD930E8B7B99CBB.png)
+<img src="images/EA16C3388EFD2F9E6CD930E8B7B99CBB.png" alt="img" style="zoom:50%;" />
 
 #### 设置方法
 
@@ -273,7 +274,7 @@ width、height表示可见宽度和高度，即content+padding+border。
 
 **方法：**
 
-1. 细化选择符：选择符越精确，优先级越高。如果两个样式发送冲突，净其中的一个样式添加上关系选择器或者属性选择器来细化选择符。
+1. 细化选择符：选择符越精确，优先级越高。如果两个样式发送冲突，取其中的一个样式添加上关系选择器或者属性选择器来细化选择符。
 2. 再写一次选择符：本质是细化选择符的特例，可以多次写。
 3. 改变css样式的位置：根据层叠的原理，后面出现的优先级更高。
 4. 用！important提升优先级：一般不建议，会把影响后续修改。
@@ -295,11 +296,11 @@ width、height表示可见宽度和高度，即content+padding+border。
 
 ### 12 伪类和伪元素
 
-**伪类：**如名字表示的一样，伪类的效果就像增加了一个虚拟的类，幽灵类。比如我想选择文档中的一些特定位置的元素，可以用伪类来选择，选择的效果和我为特定元素设置了类一样。伪类有结构伪类first-of-type、动态伪类active、UI状态伪类hover等。
+**伪类：**如名字表示的一样，伪类的效果就像增加了一个虚拟的类。比如我想选择文档中的一些特定位置的元素，可以用伪类来选择，选择的效果和我为特定元素设置了类一样。伪类有结构伪类first-of-type、动态伪类active、UI状态伪类hover等。
 
 **伪元素：**如名字一样，效果如同增加了虚拟的元素。用于创建一些不在DOM树中的元素，例如、首字母first-word、首行first-line、before、after。
 
-html5规定伪类用：，伪元素用：：。在这之前都是：。.
+css3规定伪类用：，伪元素用：：。在这之前都是：。.
 
 ### 13 画一条0.5px的线
 
@@ -410,7 +411,7 @@ animation：动画名 持续时间 时序函数 延迟时间 迭代次数 动画
 
 1. 动画开始触发：animation start
 2. 动画结束时触发：animationend
-3. 动画几次迭代结束到下一次迭代开始之前触发：animationiteration
+3. 动画本次迭代结束到下一次迭代开始之前触发：animationiteration
 
 ##### 关键帧
 
@@ -1471,6 +1472,18 @@ str += “two”
 
 字符串相关的性能写法，书上讲的不多，简单总结来看+，+=是性能最佳的写法，如果字符串数量少的话，就直接+，+=即可。
 
+### 25 获取元素宽高
+
+JS 尺寸获取方法：
+
+- clientWidth & clientHeight：content+padding
+- offsetWidth & offsetHeight：content+padding+border
+- scrollWidth & scrollHeight：scrollWidth 在没有横向滚动条的时候，大小跟 clientWidth 一样；而如果有横向滚动条，则是可视区域 + 隐藏区域 + padding。
+- Window.getComputedStyle (element)：返回style对象
+- getBoundingClientRect：返回一个包含尺寸的对象
+
+![image-20220812193242863](images/image-20220812193242863.png)
+
 ## 浏览器
 
 ### 1.跨域原理
@@ -1715,7 +1728,7 @@ https://interview2.poetries.top/days/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98.html#%
 - 优化关键字节数（缩小、压缩）来减少下载时间 优化加载剩余关键资源的顺序:
 - 让关键资源（`CSS`）尽早下载以减少 `CRP` 长度
 
-### 5.协商缓存和强制缓存（*）
+### 5.协商缓存和强制缓存（**）
 
 #### 强制缓存
 
@@ -1750,6 +1763,70 @@ if-none-match（请求）、e-tag（响应）
 
 1. 如果后端负载均衡，用多服务器存储文件，那么每个服务器的返回的e-tag是不一样的，要实现e-tag同步就和实现session同步一样麻烦。
 2. 性能上etag更差，毕竟etag需要每次计算哈希值。
+
+#### Service Worker 离线缓存
+
+`Service Worker` 是一种独立于主线程之外的 Javascript 线程。它脱离于浏览器窗体，因此无法直接访问 DOM。这样独立的个性使得 `Service Worker` 的“个人行为”无法干扰页面的性能，这个“幕后工作者”可以帮我们实现离线缓存、消息推送和网络代理等功能。我们借助 `Service worker` 实现的离线缓存就称为 `Service Worker Cache`。
+
+- `Service Worker` 的生命周期包括 `install`、`active`、`working` 三个阶段。一旦 `Service Worker` 被 `install`，它将始终存在，只会在 `active` 与 `working` 之间切换，除非我们主动终止它。这是它可以用来实现离线存储的重要先决条件。
+- 下面我们就通过实战的方式，一起见识一下 `Service Worker` 如何为我们实现离线缓存（注意看注释）： 我们首先在入口文件中插入这样一段 JS 代码，用以判断和引入 `Service Worker`：
+
+```js
+window.navigator.serviceWorker.register('/test.js').then(
+   function () {
+      console.log('注册成功')
+    }).catch(err => {
+      console.error("注册失败")
+    })
+ 
+        @程序员poetry: 代码已经复制到剪贴板
+    
+```
+
+> 在 `test.js` 中，我们进行缓存的处理。假设我们需要缓存的文件分别是 `test.html`,`test.css` 和 `test.js`：
+
+```js
+// Service Worker会监听 install事件，我们在其对应的回调里可以实现初始化的逻辑  
+self.addEventListener('install', event => {
+  event.waitUntil(
+    // 考虑到缓存也需要更新，open内传入的参数为缓存的版本号
+    caches.open('test-v1').then(cache => {
+      return cache.addAll([
+        // 此处传入指定的需缓存的文件名
+        '/test.html',
+        '/test.css',
+        '/test.js'
+      ])
+    })
+  )
+})
+
+// Service Worker会监听所有的网络请求，网络请求的产生触发的是fetch事件，我们可以在其对应的监听函数中实现对请求的拦截，进而判断是否有对应到该请求的缓存，实现从Service Worker中取到缓存的目的
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    // 尝试匹配该请求对应的缓存值
+    caches.match(event.request).then(res => {
+      // 如果匹配到了，调用Server Worker缓存
+      if (res) {
+        return res;
+      }
+      // 如果没匹配到，向服务端发起这个资源请求
+      return fetch(event.request).then(response => {
+        if (!response || response.status !== 200) {
+          return response;
+        }
+        // 请求成功的话，将请求缓存起来。
+        caches.open('test-v1').then(function(cache) {
+          cache.put(event.request, response);
+        });
+        return response.clone();
+      });
+    })
+  );
+});
+```
+
+**PS**：大家注意 `Server Worker` 对协议是有要求的，必须以 `https` 协议为前提。
 
 #### 浏览器缓存过程
 
@@ -2687,13 +2764,13 @@ React使用双缓存技术来实现更新逻辑，就像canvas绘制动画的双
    - 复制单棵树的根节点rootFiber，并用alternate指针关联两个节点，然后一个作为current一个作为workInProgress
    - 从workInProgress开始，深度调和子节点渲染视图。结束后将workInProgress作为current。
 2. 后续更新
-   - 复用之前的current，根据current来创建workInProgress树。
+   - 复用之前的current，根据current和JSX对象来创建workInProgress树。
    - 深度调和子节点渲染视图，能复用的就复用，不能的则增删移动。
 
 **每次调和包括两大阶段：**
 
 1. render阶段（调和）：
-   - **beginWork：向下调和的过程，期间会执行函数组件实例化类组件，diff调和子节点打不通的effectTag**
+   - **beginWork：向下调和的过程，期间会执行函数组件实例化类组件，diff算法调和子节点和对应的JSX对象打不同的effectTag**
      - 对于组件，执行部分生命周期，执行 render ，得到最新的 children 。
      - 向下遍历调和 children ，复用 oldFiber ( diff 算法)。
      - 打不同的副作用标签 effectTag ，比如类组件的生命周期，或者元素的增加，删除，更新。
@@ -2703,7 +2780,7 @@ React使用双缓存技术来实现更新逻辑，就像canvas绘制动画的双
 2. commit阶段（处理生命周期和副作用钩子、更新中增删改节点和一些细节的处理，比如Ref）：
    - **`Before mutation` 阶段（执行 DOM 操作前）**
      - 因为 Before mutation 还没修改真实的 DOM ，是获取 DOM 快照的最佳时期，如果是类组件有 getSnapshotBeforeUpdate ，那么会执行这个生命周期。
-     - 会异步调用 useEffect ，在生命周期章节讲到 useEffect 是采用异步调用的模式，其目的就是防止同步执行时阻塞浏览器做视图渲染。
+     - 会调度 useEffect的优先级 ，在生命周期章节讲到 useEffect 是采用异步调用的模式，其目的就是防止同步执行时阻塞浏览器做视图渲染。
    - **`mutation` 阶段（执行 DOM 操作）**
      - 置空 ref ，在 ref 章节讲到对于 ref 的处理。
      - 对新增元素，更新元素，删除元素。进行真实的 DOM 操作。
@@ -2727,13 +2804,54 @@ Diff算法的本质是对比current Fiber和当前更新调用Render得到的JSX
 
 Diff算法子节点的更新分为两类：单节点更新和多节点更新。
 
-##### 单节点更新
+##### 单节点Diff
 
-1. 判断
+判断key和type是否相同，决定是否复用旧节点。
+
+1. 先比较key，相同则继续判断，不同则标记删除该节点。
+2. 继续比较type，相同则复用，直接返回。不同则标记删除该节点和后面的兄弟节点。
+3. 最后在标记完删除后，新建节点。
+
+##### 多节点Diff
+
+多节点Diff会经历三次遍历，第一次遍历处理节点的更新（包括props、type更新和删除），第二次遍历处理节点新增的情况，第三次遍历处理位置移动的改变。
+
+**第一次遍历**
+
+​	因为老的节点存在于current Fiber中，所以它是个链表结构，还记得Fiber双缓存结构嘛，节点通过child、return、sibling连接，而newChildren存在于jsx当中，所以遍历对比的时候，首先让newChildren[i]`与`oldFiber对比，然后让i++、nextOldFiber = oldFiber.sibling。在第一轮遍历中，会处理三种情况，其中第1，2两种情况会结束第一次循环
+
+1. key不同，第一次循环结束
+2. newChildren或者oldFiber遍历完，第一次循环结束
+3. key同type不同，标记oldFiber为DELETION
+4. key相同type相同则可以复用
+
+newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将oldFiber中没遍历完的节点标记为DELETION，即删除的DELETION Tag
+
+**第二次遍历**
+
+第二次遍历考虑三种情况
+
+```
+  1. newChildren和oldFiber都遍历完：多节点diff过程结束
+  2. newChildren没遍历完，oldFiber遍历完，将剩下的newChildren的节点标记为Placement，即插入的Tag
+  3. newChildren和oldFiber没遍历完，则进入节点移动的逻辑
+```
+
+**第三次遍历**
+
+主要逻辑在placeChild函数中，例如更新前节点顺序是ABCD，更新后是ACDB
+
+1. newChild中第一个位置的A和oldFiber第一个位置的A，key相同可复用，lastPlacedIndex=0
+2. newChild中第二个位置的C和oldFiber第二个位置的B，key不同跳出第一次循环，将oldFiber中的BCD保存在map中
+3. newChild中第二个位置的C在oldFiber中的index=2 > lastPlacedIndex=0不需要移动，lastPlacedIndex=2
+4. newChild中第三个位置的D在oldFiber中的index=3 > lastPlacedIndex=2不需要移动，lastPlacedIndex=3
+5. newChild中第四个位置的B在oldFiber中的index=1 < lastPlacedIndex=3,移动到最后
 
 ### 5. 生命周期
 
 组件的生命周期可以分为三个阶段：组件初始化、组件更新、组价销毁。
+
+<img src="images/_27.png" alt="_27" style="zoom:50%;" />
 
 ![image-20220704222250028](images/image-20220704222250028.png)
 
