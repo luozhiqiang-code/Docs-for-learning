@@ -9,9 +9,9 @@
 3. grid：设置行列模板都为1fr。
 4. inline-block：子元素宽高33.33%。注意通过letter-spacing、word-spacing、font-size等消除边距，并且vertical-align对其top，否则上下有间隙。
 
-### 2.水平垂直居中
+### 2.水平垂直居中（*）
 
-1. 知道内部元素与外部元素的宽高，通过设置计算设置宽高即可。
+1. 知道内部元素与外部元素的宽高，通过设置计算设置margin即可。
 2. 父元素display:grid、align-items:center、justify-items:center。
 3. 父元素display:grid、align-items:center、justify-content:center。
 4. **父元素display:grid，子元素margin：auto。**
@@ -136,7 +136,7 @@ meta标签的content属性里包含两个选项。首先，它告诉浏览器当
 
 ❑ 不要忘记给视口添加meta标签。
 
-### 6. 选择器和优先级
+### 6. 选择器和优先级（*）
 
 #### 1.选择器类型
 
@@ -160,29 +160,31 @@ meta标签的content属性里包含两个选项。首先，它告诉浏览器当
 
 #### 3.优先级
 
+层叠式样式的优先级主要考虑四个点。
+
 1. important标记：有import标记的要大于没有的，有import的外部样式要大于内联样式。
 2. 来源：读者的！import>创作者的！import>创作者>读者>用户代理
-3. 权重：按权重值排序
+3. 权重：权重就是根据选择的粒度计算出的权重，选择的粒度越小权重越大，按权重值排序
 4. 位置：同等权重下后面的要覆盖前面的
 
-### 7. position定位
+### 7. position定位（**）
 
 position用来设置元素的定位，有static、relative、absolute、fixed、sticky等值。
 
-#### 绝对定位
+#### 绝对定位（脱离文档流）
 
 1. 子绝父相
 2. 子绝，父为最近的非static。如果没有，则将页面第一屏body作为初始定位块。
 
-#### 固定定位
+#### 固定定位（脱离文档流）
 
 将要定位的元素设置为fixed即可，不需要设定父。**容纳块为视区，固定元素完全脱离标准文档流。**
 
 #### 相对定位
 
-相对定位的容纳块必须为static。
+相对定位相对于静态布局流中的位置而言，相对定位的容纳块必须为static正常布局流。
 
-#### 粘滞定位
+#### 粘滞定位（脱离文档流）
 
 设置为sticky的元素，偏移属性用来定义相对容纳块的粘滞定位移动区域。
 
@@ -661,16 +663,16 @@ main元素可以提前，因为绝对定位会脱离文档流。
       }
 ```
 
-### 18. 什么是BFC
+### 18. 什么是BFC（*）
 
-BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
+BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界，
 
 **创建方式：**
 
 - 浮动属性float不为none
 - 定位属性position：absolute、fixed（非static和relative以外）等
 - 行内块inline-block
-- 表格单元diaplay: table这类属性table-cell、table-caption
+- 表格单元diaplay: table-cell、table-caption
 - 弹性盒子：display：flex，inline-flex
 - overflow：非visible（wrap）
 - IE：Layout，通过zoom:1
@@ -724,6 +726,21 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 
   <img src="https://s.poetries.work/gitee/2020/09/111.png" alt="img" style="zoom: 33%;" />
 
+### CSS 隐藏元素的方法（*）
+
+主要分三种，消失、移动、缩放三个思路。
+
+1. display：none，从渲染树中移除。
+2. **visibility：hidden，元素仍然占据空间，相当于隐身，但是不会响应绑定的事件。**
+3. opacity：0，元素透明，占据空间，响应事件。
+4. filter：blur(0)，使得元素的模糊度为0，实现消失的效果。
+5. color：alpha通道设置透明度为0，效果和opacity类似。
+6. **position：absolute，设置left，top为足够的负值，将元素移除可视区域。**
+7. **transform：将元素移除可视区域。**
+8. **z-index：通过使用负值，将元素移到最底层，实现隐藏。**
+9. transform：scale(0,0)，缩放为0，仍然占据空间，但是不会响应监听的事件。
+10. width\height：0，使得元素不显示。
+
 ## HTML
 
 ## JavaScript
@@ -736,17 +753,17 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 4. useEffect给组件添加定时器，根据传入的轮播时间切换下标。
 5. 然后就是给bullet和左右切换按钮添加点击事件，点击切换下标出发state改变，然后重新渲染展示的图片，bullet也根据下标修改class，css配合修改激活颜色；
 
-### 2.闭包
+### 2.闭包（**）
 
 闭包的概念：闭包指的是能够读取其他函数作用域的函数。
 
-如果要显示的表现闭包，那就是在一个函数内部定义另一个函数。那么根据词法作用域，内部的函数是可以访问外部函数的作用域的。然后以某种方式在函数外部获得这个内部函数的引用（通过返回值或者设置为外部对象的属性，或者将函数作为外部的函数的参数）。那么当整个包裹函数执行完之后，调用栈的指针就会下移一位，释放该函数的执行上下文。那么此时内部的函数引用了作用域中的变量，并且内部的函数也被别的执行上下文引用。此时虽然调用栈释放了包裹函数的执行上下文，但是会在堆内存中开辟一块空间，用来存储被内部函数引用的变量，这就是闭包。
+如果要显示的表现闭包，那就是在一个函数内部定义另一个函数。那么根据词法作用域，内部的函数是可以访问外部函数的作用域的。然后以某种方式在外部函数外部获得这个内部函数的引用（通过返回值或者设置为外部对象的属性，或者将函数作为外部的函数的参数）。那么当整个外部函数执行完之后，调用栈的指针就会下移一位，释放外部函数的执行上下文。但是此时内部的函数引用了外部作用域中的变量，并且内部的函数又被别的执行上下文引用。此时虽然调用栈释放了外部函数的执行上下文，但是会在堆内存中开辟一块空间，用来存储被内部函数引用的变量，这就是闭包。
 
 闭包的特性：
 
 - 函数内再嵌套函数
 - 内部函数可以引用外层的参数和变量
-- 参数和变量不会被垃圾回收机制回收
+- 参数和变量被存放在堆内存中，不会被垃圾回收机制回收
 
 闭包的好处;
 
@@ -757,30 +774,30 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 
 1. 闭包会长驻在内存中，使用不当会造成内存溢出。
 
-解决方法：合理使用闭包，避免不必要的产生闭包的情况。对于必要的闭包，在不需要的时候即使解除引用，让垃圾回收机制回收。
+解决方法：合理使用闭包，避免不必要的产生闭包的情况。对于闭包，在不需要的时候即使解除引用，让垃圾回收机制回收。
 
 闭包的应用场景：
 
 1. 创建私有变量
 2. JavaScript的模块机制就是利用闭包的原理
 3. 回调函数
-4. 函数防抖和函数节流等
+4. 函数防抖和函数节流，很多返回对象或函数量的函数，都是利用闭包来创建私有变量和缓存数据。
 
 ![image-20220613102127638](images/image-20220613102127638.png)
 
-### 3.原型链
+### 3.原型链（*）
 
 原型链的由来：JavaScript中是没有类的概念的。在面向类的语言中，实例化一个对象，就是将类的属性和方法复制到实例化对象上，而JavaScript中是没有类似的复制机制的。不能创建一个类的多个实例，只能创建多个对象，而多个对象的内部链接[[prototype]]指向同一个对象，也就是说这多个对象通过这个内部链接复用了指向对象的某些方法和属性，而不是复制这些方法和属性。那么这个指向关系就是原型链。
 
 ![image-20220613102405697](images/image-20220613102405697.png)
 
-JavaScript的继承是基于原型链的，也就是将一个对象A的内部链接[[prototype]]指向另外一个对象B的prototypetype属性，那么A就继承了B的prototype上的属性和方法，这种继承是借用，而不是复制。
+JavaScript的继承是基于原型链的，也就是将一个对象A的内部链接[[prototype]]指向另外一个对象B的prototype对象上，那么A就继承了B的prototype上的属性和方法，这种继承是借用，而不是复制。
 
 在JavaScript，有两个元老级别的对象，函数Object和函数Function。新的对象的内部链接[[prototype]]都指向Object的prototype对象，而Object的内部链接[[prototype]]只能指空。新的函数的内部链接[[prototype]]都指向Function的prototype对象，而Function的内部链接[[prototype]]指向Object的prototype对象。
 
 也就是说，从原型链上寻找，所有的函数的内部链接[[prototype]]最终会指向Function的prototype对象，所有对象的内部链接最终会指向Object的prototype对象。
 
-### 4.判断数据类型的方法
+### 4.判断数据类型的方法（*）
 
 1. 基本数据类型用typeof，typeof不能判断引用数据类型和null。typeof的值（number、string、function、object、undefined、boolean）
 2. 引用数据类型用instanceof（instanceof的原理主要是看两个对象的内部链接prototype的指向）。
@@ -793,7 +810,7 @@ Object的toString得到的字符串是[object Number]，常用于判断类型。
 
 而Function、Number、String等构造函数的toString重写了Object的原型上的toString，得到的是函数的字符串形式"function Number() { [native code] }"；
 
-### 6.this的指向问题
+### 6.this的指向问题（***）
 
 JS中的this可以理解为执行环境或者调用对象。从物理的角度来看，在js的调用栈中的每个函数的执行上下文都有四个对象，变量环境、词法环境、外部环境、还有this对象，this就相当于这个函数的调用对象或者执行环境。
 
@@ -801,30 +818,42 @@ JS中的this可以理解为执行环境或者调用对象。从物理的角度�
 
 在js的执行过程中，函数的this的指向是动态变化的，有四种绑定this的方式。
 
-1. 默认绑定：默认就是没有应用其它绑定时的绑定，当直接调用函数时，函数的this默认绑定到全局对象（严格模式下为undefined）。默认绑定也是导致函数丢失this的原因，在JS中如果多个函数嵌套，内层的函数直接调用是this就丢失了。
+1. 默认绑定：默认就是没有应用其它绑定时的绑定，当直接调用函数时，函数的this默认绑定到全局对象（严格模式下为undefined）。默认绑定也是导致函数丢失this的原因，在JS中如果多个函数嵌套，内层的函数直接调用时this就丢失了（比如定时器的回调、react事件的回调）。
 
-2. 隐式绑定：当用一个对象调用函数是，this隐式绑定为调用对象。
+2. 隐式绑定：当用一个对象调用函数时，this隐式绑定为调用对象。
 
-3. 显式绑定：用call，apply,bind绑定函数的this。
+3. 显式绑定：用call，apply，bind绑定函数的this。
 
-4. new绑定：用new关键字调用函数，会执行如下几个步骤：
+4. **new绑定**：用new关键字调用函数，会执行如下几个步骤：
 
    1.创建一个全新的对象。
 
-   2.将这个对象的内部链接[[prototype]]指向函数的prototype属性。
+   2.将这个对象的内部链接[[prototype]]指向被调用函数的prototype属性。
 
    3.将新对象的this绑定到函数的this，然后调用函数初始化对象。
 
    4.如果函数没返回其它对象，则将新对象返回。
 
-### 7. 箭头函数和普通函数的区别
+```js
+function _new(fn, ...args) {
+  if (typeof fn !== "function") {
+    throw "fn must be a function type";
+  }
+
+  let obj = Object.create(fn.prototype);
+  let res = fn.apply(obj, args);
+  return res instanceof Object ? res : obj;
+}
+
+```
+
+### 7. 箭头函数和普通函数的区别(**)
 
 箭头函数和普通函数主要区别在于this对象的指向。
 
 1. 箭头函数的this是静态的，由词法作用域决定，所以箭头函数的this是根据词法作用域找最近的调用对象，也就是箭头函数外第一层函数的this对象。
-2. 因为箭头函数的this是基于词法作用域的，所以不可以修改。从而函数的四种绑定对于this都不管用，this不可以用new调用。
+2. 因为箭头函数的this是基于词法作用域的，所以不可以修改。从而函数的四种绑定对于this都不管用箭头函数不可以用bind、apply、call调用，不能使用new调用。
 3. 箭头函数没有arguments对象。
-4. 箭头函数不可以用bind、apply、call调用。
 5. 箭头函数不能作为生成器函数使用yield关键字。
 
 ### 8. 堆内存和栈内存
@@ -1043,7 +1072,7 @@ inheritPrototype(Child, Parent);
 
 ##### 变量提升的原理：
 
-在调用栈中的每个执行上下文中，存在变量环境、词法环境、外部环境、this对象。其中变量环境就是用来存储var声明的变量，词法环境用来存放let和const存放的变量。当JavaScript代码执行之前，会个非常短暂的编译阶段，这个时候全局作用域中var声明的变量会被存到全局执行上下文的变量环境中，并赋值为undefined，let和const声明的变量会被放到词法环境中。而执行到每个函数的时候会把函数中var声明的变量赋值undefined放入变量环境，把let和const声明的变量放入词法环境中。从原理上来看let和const其实也实现了变量提升，只是let和const已经声明的变量在零时死区被屏蔽了。表现出来就是当代码执行的时候，如果在没有声明位置前使用var声明的变量会从变量环境中查找得到undefined的值，如果是let和const声明的变量，则存在词法环境中在遍历环境中找不到所以会报错。
+在调用栈中的每个执行上下文中，存在变量环境、词法环境、外部环境、this对象。其中变量环境就是用来存储var声明的变量，词法环境用来存放let和const存放的变量。当JavaScript代码执行之前，会有个非常短暂的编译阶段，这个时候全局作用域中var声明的变量会被存到全局执行上下文的变量环境中，并赋值为undefined，let和const声明的变量会被放到词法环境中。而执行到每个函数的时候会把函数中var声明的变量赋值undefined放入变量环境，把let和const声明的变量放入词法环境中。从原理上来看let和const其实也实现了变量提升，只是let和const已经声明的变量在零时死区被屏蔽了。表现出来就是当代码执行的时候，如果在没有声明位置前使用var声明的变量会从变量环境中查找得到undefined的值，如果是let和const声明的变量，则存在词法环境中。在遍历变量环境中找不到所以会报错。
 
 <img src="https://s.poetries.work/gitee/2019/11/1.png" alt="img" style="zoom:50%;" />
 
@@ -1130,32 +1159,52 @@ ES6的作用域：
 
 ### 18. Array的方法
 
-1. slice
-2. splice
-3. split
-4. sort
-5. join
+#### **改变数组的方法**
+
+一般对操作数组的方法会改变数组
+
+1. splice
+2. reverse
+3. fill
+4. copyWithin
+5. sort
 6. push
 7. pop
-8. shift
-9. unshift
-10. some
-11. forEach
-12. reduce
-13. map
-14. filter
-15. concat
-16. indexOf
-17. includes
-18. find
-19. findIndex
-20. has
-21. every
-22. fill
-23. flat
-24. reverse
+8. unshift
+9. shift
 
-### 19. ES6新特性
+#### **不改变数组的方法**
+
+一般遍历数组的方法不会改变数组
+
+遍历对数组处理
+
+1. map
+2. reduce
+3. filter
+4. forEach（纯遍历）
+
+遍历对数组测试
+
+1. every
+2. some
+3. has
+
+遍历查找
+
+1. indexOf
+2. includes
+3. find
+4. findIndex
+
+对数组进行操作
+
+1. slice
+2. concat
+3. join
+4. flat
+
+### 19. ES6新特性（*）
 
 1. 块级作用域let和const：
 2. 模板字面量：模板字面量最大的威力就是标签模板，标签模板可以对模板中的字符串和变量进行处理返回新的字符串。例如styled-components就是利用标签模板实现在CSS代码中插入props变量的。
@@ -1484,6 +1533,37 @@ JS 尺寸获取方法：
 
 ![image-20220812193242863](images/image-20220812193242863.png)
 
+### 26 实例对象有哪些方法访问原型链
+
+Object.prototype.\__proto\_\_
+
+Object.prototype.isPrototypeOf()
+
+Object.getPrototypeOf() 
+
+Object.setPrototypeOf()
+
+in 操作符
+
+instanceof 操作符
+
+### 26 Canvas和SVG有什么区别？
+
+- `svg`绘制出来的每一个图形的元素都是独立的`DOM`节点，能够方便的绑定事件或用来修改。`canvas`输出的是一整幅画布
+- `svg`输出的图形是矢量图形，后期可以修改参数来自由放大缩小，不会失真和锯齿。而`canvas`输出标量画布，就像一张图片一样，放大会失真或者锯齿
+
+### 27 babel原理
+
+Babel 是一个 JavaScript 编译器。他把最新版的 javascript 编译成当下可以执行的版本，简言之，利用 babel 就可以让我们在当前的项目中随意的使用这些新最新的 es6，甚至 es7 的语法
+
+> `ES6、7`代码输入 -> `babylon`进行解析 -> 得到`AST`（抽象语法树）-> `plugin`用`babel-traverse`对`AST`树进行遍历转译 ->得到新的`AST`树->用`babel-generator`通过`AST`树生成`ES5`代码
+
+**Babel 的三个主要处理步骤分别是： 解析（parse），转换（transform），生成（generate）**
+
+- **解析** 将代码解析成抽象语法树（`AST`），每个 js 引擎（比如 Chrome 浏览器中的 V8 引擎）都有自己的 `AST` 解析器，而 `Babel` 是通过 `Babylon` 解析器实现的。在解析过程中有两个阶段：词法分析和语法分析，词法分析阶段把字符串形式的代码转换为令牌（`tokens`）流，令牌类似于 `AST` 中节点；而语法分析阶段则会把一个令牌流转换成 AST 的形式，同时这个阶段会把令牌中的信息转换成 AST 的表述结构
+- **转换** 在这个阶段，`Babel` 接受得到 `AST` 并通过 `babel-traverse` 对其进行深度优先遍历，在此过程中对节点进行添加、更新及移除操作。这部分也是 `Babel` 插件介入工作的部分
+- **生成** 将经过转换的 `AST` 通过 `babel-generator`再转换成 `js` 代码，过程就是深度优先遍历整个 `AST`，然后构建可以表示转换后代码的字符串。
+
 ## 浏览器
 
 ### 1.跨域原理
@@ -1511,7 +1591,7 @@ JS 尺寸获取方法：
 
 5. 反向代理：跨域主要是浏览器接受数据有限制，服务器和服务器之间不跨域。给前端设置一个代理服务器，前端的请求转发到后端，然后再将后端的响应转发前端，代理服务器会将响应头的域名设置与前端同源；
 
-### 2.浏览器存储
+### 2.浏览器存储（*）
 
 | 方式           | 时效                     | 大小                    | 作用域         | 存在地点             |
 | -------------- | ------------------------ | ----------------------- | -------------- | -------------------- |
@@ -1522,7 +1602,7 @@ JS 尺寸获取方法：
 
 cookie、sessionStorage、localStorage使用方法，见代码；
 
-cookie的属性：name, value, expires, path, domain, secure，httpOnly，sameSite。
+cookie的属性：name, value, expires, path, domain, secure（仅https发送到服务器），httpOnly（脚本不可读，只给HTTP发送），sameSite：strict。
 
 #### 应用场景
 
@@ -1728,7 +1808,7 @@ https://interview2.poetries.top/days/%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98.html#%
 - 优化关键字节数（缩小、压缩）来减少下载时间 优化加载剩余关键资源的顺序:
 - 让关键资源（`CSS`）尽早下载以减少 `CRP` 长度
 
-### 5.协商缓存和强制缓存（**）
+### 5.协商缓存和强制缓存（***）
 
 #### 强制缓存
 
@@ -1956,11 +2036,11 @@ HTML5事件
 - DOMContentLoaded：window的load事件会在页面完全加载后触发，因为要等待很多外部资源加载完成，所以会花费较长时间。而DOMContentLoaded事件会在DOM树构建完成后立即触发，而不用等待图片、JavaScript文件、CSS文件或其他资源加载完成。相对于load事件，DOMContentLoaded可以让开发者在外部资源下载的同时就能指定事件处理程序，从而让用户能够更快地与页面交互。
 - hashchange:HTML5增加了hashchange事件，用于在URL散列值（URL最后#后面的部分）发生变化时通知开发者。这是因为开发者经常在Ajax应用程序中使用URL散列值存储状态信息或路由导航信息。onhashchange事件处理程序必须添加给window，每次URL散列值发生变化时会调用它。event对象有两个新属性：oldURL和newURL。这两个属性分别保存变化前后的URL，而且是包含散列值的完整URL。下面的例子展示了如何获取变化前后的URL：
 
-### 8.  事件循环系统（**）
+### 8.  事件循环系统（***）
 
 每个渲染进程都有一个主线程，并且主线程非常繁忙，既要处理 DOM，又要计算样式，还要处理布局，同时还需要处理 JavaScript  任务以及各种输入事件。要让这么多不同类型的任务在主线程中有条不紊地执行，这就需要一个系统来统筹调度这些任务，这个统筹调度系统就是消息队列和事件循环系统。
 
-一个渲染进程包括用于执行任务的渲染主线程、用于存储任务的消息队列、用于添加任务的IO线程。
+一个渲染进程包括用于执行任务的渲染主线程、用于存储任务的消息队列、用于添加任务的IO线程、还有执行定时器的延时队列。
 
 <img src="images/30-165519002228911.png" alt="img" style="zoom:50%;" />
 
@@ -1974,7 +2054,7 @@ HTML5事件
 
 IO线程：负责接受其他进程传来的消息与渲染主线程通信，产生新的任务，添加到消息队列中。
 
-延时队列：为了支持定时器的实现，浏览器增加了延时队列。在每次执行完消息队列的一个宏任务后会判断延时任务是否需要执行，然后执行延时任务。然后循环整个过程。
+延时队列：为了支持定时器的实现，浏览器增加了延时队列。在每次执行完消息队列的一个宏任务后会判断延时任务是否需要执行，然后执行延时任务。然后循环整个过程。所以定时任务的执行会受到当前执行的宏任务和微任务影响。
 
 微任务队列：微任务队列存在全局执行上下文中，微任务队列中存放着优先级更高的微任务。
 
@@ -1999,7 +2079,7 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 4. async、await
 5. node 的process.nextTick（**`process.nextTick`指定的异步任务总是发生在所有异步任务之前**）
 
-### 9.promise
+### 9.promise（***\*\*）
 
 ![image-20220614162950763](images/image-20220614162950763.png)
 
@@ -2007,10 +2087,12 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 
 **异步回调的缺点：**
 
-1. 嵌套调用，下面的任务依赖于上面的任务的请求结果，并且在上面的任务的回调函数中开展新的业务逻辑。就会形成嵌套，导致代码逻辑混乱。
-2. 任务的不确定性，每个任务有两个执行结果，对每个结果要做不同的处理，这样对于每个任务都有一次额外的错误处理，更加剧了代码的混乱程度。
+1. 嵌套调用，后面的任务依赖于前面的任务的请求结果，并且在前面的任务的回调函数中开展新的业务逻辑。就会形成嵌套，导致代码逻辑混乱。
+2. 错误处理，每个任务有两个执行结果，对每个结果要做不同的处理，这样对于每个任务都有一次额外的错误处理，更加剧了代码的混乱程度。
 
 3. 回调模式还有一个致命的问题，就是不可信任。如果回调没有按照预期的执行（不执行回调，执行多次回调），那么整个执行流程就会乱套。
+
+4. 回调模式的任务编排不方便，需要自己来实现Promise.all，Promise.face这种任务流程。
 
 ![image-20220614165405360](images/image-20220614165405360.png)
 
@@ -2025,7 +2107,7 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 1. promise的回调函数可以延时绑定，降低代码耦合性降低，并且编排回调任务更加灵活。
 2. 回调函数的返回值能够穿透到最外层，使得函数不再嵌套，并且可以链式调用。
 3. promise抛出的异常，可以向后传递直到被解决为止，这样不需要在每个promise对象中捕获异常。
-4. promise遵循promise规范，每个任务只有三种状态，pending、resolved、rejected。promise根据状态决定是否执行then中注册的回调函数。回调函数的执行与否，执行次数都是可控的。
+4. promise遵循promise规范，每个任务只有三种状态，pending、resolved、rejected。promise根据状态决定是否执行then中注册的回调函数。回调函数的执行与否，执行次数都是可控的，Promise是可信任的。
 
 **Promise方法**
 
@@ -2073,7 +2155,7 @@ console.log(3)
 
 **联系：**这三者在客户端相互协调合作就可以形成样式精美，交互逻辑丰富的页面。
 
-### 12. 前端页面优化
+### 12. 前端性能优化（**）
 
 https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8%83%BD
 
@@ -2090,7 +2172,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 4.如果缓存不存在则向服务器发起http请求，通过dns解析出服务器的IP地址。
 
-- **浏览器对连接数量有限制，并且对于HTTP1.1，每个请求都要建立和断开连接，消耗好几个RTT时间，再加上TCP的慢启动等原因，导致连接这一块会消耗很多时间，并且连接数量的限制使得后面的请求得排队。所以使用HTTP2.0，多路复用的技术使得多个请求使用同一个tcp连接加快了网页的加载速度，解决了请求队列的问题。还支持header压缩，进一步减少了请求数据的大小。**
+- **浏览器对同一个域名HTTP的并发连接数量有限制（Chrome是六个），并且对于HTTP1.1，每个请求都要建立和断开连接，消耗好几个RTT时间，再加上TCP的慢启动等原因，导致连接这一块会消耗很多时间，并且同一个域名下HTTP并发连接数量满了以后，后面的请求得进入队列排队。所以使用HTTP2.0，多路复用的技术使得多个请求使用同一个tcp连接加快了网页的加载速度，解决了请求队列的问题。还支持header压缩，进一步减少了请求数据的大小。**
 
 - **通过DNS预解析的方式获得域名对应的ip地址。**
 
@@ -2108,7 +2190,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 9.浏览器收到HTML后就会解析加载HTML，加载资源。
 
-- **静态资源使用CDN加速，因为浏览器对于单个域名有并发请求上限，多个CDN域名可以加快资源的获取。并且CDN分散了单个服务器收发数据的压力，资源下载速度更快。**
+- **静态资源使用CDN加速，因为浏览器对于单个域名有并发请求上限（Chrome是6个），多个CDN域名可以加快资源的获取。并且CDN分散了单个服务器收发数据的压力，资源下载速度更快。**
 
 - **使用预加载，有些资源当前不需要用的，但是后面很快就要用到，使用预加载提前加载这部分资源，并且预加载不会阻塞onload事件。**
 
@@ -2122,7 +2204,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
   <link rel="prerender" href="http://poetries.com">
   ```
 
-- **使用srcset属性，或者媒体查询给特定屏幕大小的用户提供合适的图片**
+- **图片使用srcset属性，或者媒体查询给特定屏幕大小的用户提供合适的图片**
 
 - **小图使用base64格式，使用雪碧图将多个图片整合成一张减少请求发送的次数。**
 
@@ -2164,9 +2246,9 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 **React的性能优化主要考虑的是提高调和的效率，减少Diff的次数：**
 
-1. 缓存React.element对象，对于数据不变的情况使用缓存，数据改变才重新创建。（使用useMemo、useCallback、PureComponent、shouldComponentUpdate、React.Memo）
+1. 缓存React.element对象，对于数据不变的情况使用缓存，数据改变才重新创建。（使用useMemo、useCallback）
 
-2. 要进行缓存的情况：展示了大量数据的可视化组件、含有大量表单、越靠近App root越要注意重复渲染。
+2. 使用PureComponent、shouldComponentUpdate、React.Memo浅比较避免重复渲染：特别是展示了大量数据的可视化组件、含有大量表单的组件、越靠近App root越要注意重复渲染。
 
 3. 异步渲染，对于需要请求后台数据的组件使用异步渲染。同步渲染得先挂载对象后再请求数据，然后新数据导致再一次渲染。而异步渲染直接请求数据然后渲染，在这过程中用loading动画代替。
 
@@ -2176,7 +2258,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 6. 合理使用state，避免不必要的渲染，例如坐标这种频繁更改的数据使用Ref来保存而不是state。
 
-7. 使用useCallback缓存回调函数，否则每次的回调函数都是新建的会引起重复渲染，特别是使用了PureComponent或者React.Memo这类的。
+7. 使用useCallback缓存回调函数，否则每次的回调函数都是新建的会引起重复渲染，特别是浅比较的时候。
 
 8. 使用合理的key，避免不必要的渲染。
 
@@ -2214,7 +2296,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 2. requestIdelCallback（cb,{timeout:2000}）可以传入第二个参数设置超时时间，那么如果帧与帧直接没时间执行，就添加定时器任务。
 3. 使用webWork开启新线程执行定时任务。
 
-### 14. XSS和CSRF
+### 14. XSS和CSRF（***）
 
 **XSS(cross-site-scriting)：**跨站脚本攻击，利用网址的安全漏洞，通过url、输入框等合法操作，注入脚本修改用户的网页或者获取用户的cookie。
 
@@ -2231,23 +2313,23 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 防御方式：
 
 1. 对输入进行过滤，包括URL、查询关键字、post数据、input输入内容。
-2. 对于输出的内容做转义处理，使得恶意脚本不能执行。
-3. cookie设置httpOnly，使得脚本无法读取cookie。
-4. cookie设置secure，告诉浏览器只在请求https的时候发送cookie。
-5. 对于显示富文本，不能转义所有字符，那么可以通过白名单或者黑名单来过滤。
+2. 对于输入富文本，不能转义所有字符，那么可以通过白名单或者黑名单来过滤。
+3. 对于输出的内容做转义处理，使得恶意脚本不能执行。
+4. cookie设置httpOnly，使得脚本无法读取cookie。
+5. cookie设置secure，告诉浏览器只在请求https的时候发送cookie。
 
 **CSRF(cross-site-request-forgery)：**跨站请求伪造，利用浏览器发送请求会自动携带cookie的特点，伪造用户身份发送请求。
 
-原理：浏览器在向服务器发送请求是不管是在哪个网站，都会携带cookie。
+原理：浏览器在向服务器发送请求是不管是在哪个网站发送，都会携带cookie。
 
-举例：邮箱中的钓鱼邮件，qq邮箱有很多钓鱼邮件。如果打开了邮件中的网页，就可以通过img标签或者表单向腾讯后台发送删除邮件请求，然后邮件就被删除了。如果登录了淘宝，淘宝有安全漏洞，就可以借助邮件中的Img标签向淘宝后端发送转账请求。
+举例：邮箱中的钓鱼邮件，qq邮箱有很多钓鱼邮件。如果打开了邮件中的网页，就可以通过img标签或者表单向腾讯后台发送删除邮件请求，然后邮件就被删除了。如果浏览器在别的网页登录了淘宝，并且淘宝有安全漏洞，就可以借助邮件中的Img标签向淘宝后端发送转账请求。
 
 防御方式：
 
 1. get请求只请求数据，不修改数据。那么就可以避免那些通过带src属性的标签伪造的请求。
-2. 不让第三方网址访问用户的cookie，也就是cookie samesite属性设置为true。
-3. 请求附带验证信息，比如验证码或者token。
-4. 服务器阻止第三方网址访问接口。
+2. 不让第三方网址访问用户的cookie，也就是cookie samesite属性设置为strict，只让和发送目标域名相同的网站携带cookie。
+3. 请求附带验证信息，比如验证码或者token，token不会被自动携带上，还有移动图案人机验证等。
+4. 服务器阻止第三方网址访问接口，或者对第三方网址不响应。
 
 ### 15. requestIdleCallBack和requestAnimationFrame
 
@@ -2542,7 +2624,7 @@ export const transformIf = createStructuralDirectiveTransform(
   - **Expires**
   - **Last-Modified**
 
-### 4. HTTP和HTTPS区别
+### 4. HTTP和HTTPS区别（**）
 
 **HTTPS：**HTTPS 要比 HTTP 多了 secure 安全性这个概念，实际上， HTTPS 并不是一个新的应用层协议，它其实就是 HTTP + TLS/SSL 协议组合而成，而安全性的保证正是 SSL/TLS 所做的工作。
 
@@ -2555,7 +2637,7 @@ export const transformIf = createStructuralDirectiveTransform(
 **区别：**
 
 - HTTP 是明文传输协议，HTTPS 协议是由 SSL+HTTP 协议构建的可进行加密传输、身份认证的网络协议，比 HTTP 协议安全。
-- HTTPS比HTTP更加安全，对搜索引擎更友好，利于SEO,谷歌、百度优先索引HTTPS网页。
+- HTTPS对搜索引擎更友好，利于SEO,谷歌、百度优先索引HTTPS网页。
 - HTTPS标准端口443，HTTP标准端口80。
 - HTTPS需要用到SSL证书，而HTTP不用。
 
@@ -2564,12 +2646,12 @@ export const transformIf = createStructuralDirectiveTransform(
 1. 对数据进行加密，并建立一个信息安全通道，来保证传输过程中的数据安全;
 2. 对网站服务器进行真实身份认证。
 
-### 5. HTTPS工作原理
+### 5. HTTPS工作原理（**）
 
 TLS/SSL 的功能实现主要依赖于三类基本算法：
 
-- 对称加密：采用协商的密钥对数据加密。
-- 非对称加密：用于加密实现身份认证和密钥协商。
+- 对称加密：采用相同的密钥对数据加密和解密，优点是加密解密速度快，缺点是不可靠。
+- 非对称加密：采用不同的密钥分别进行加密和解密，用于加密身份认证和对称密钥协商的过程，优点是可靠，缺点是加密解密慢。
 - 散列函数：用于验证信息的完整性（MD5就是一种散列函数）。
 
 #### 对称加密
@@ -2598,7 +2680,7 @@ TLS/SSL 的功能实现主要依赖于三类基本算法：
 
 梳理起来，可以把**TLS 1.2 握手过程**分为主要的五步👇
 
-<img src="images/71.png" alt="img" style="zoom:50%;" />
+<img src="images/71.png" alt="img"  />
 
 ##### 步骤(1)
 
@@ -2606,7 +2688,7 @@ Client发起一个HTTPS请求，连接443端口。这个过程可以理解成是
 
 ##### 步骤(2)
 
-Server端收到请求后，通过第三方机构私钥加密，会把数字证书（也可以认为是公钥证书）发送给Client。
+Server端收到请求后，通过第三方机构私钥加密，会把公钥证书发送给Client。
 
 ##### 步骤(3)
 
@@ -2616,7 +2698,7 @@ Server端收到请求后，通过第三方机构私钥加密，会把数字证�
 
 ##### 步骤(4)
 
-在安全拿到**服务器公钥**后，客户端Client随机生成一个**对称密钥**，使用**服务器公钥**（证书的公钥）加密这个**对称密钥**，发送给Server(服务器)。
+在安全拿到**公钥证书上的公钥**后，客户端Client随机生成一个**对称密钥**，使用**公钥**（公钥证书上的公钥）加密这个**对称密钥**，发送给Server(服务器)。
 
 ##### 步骤(5)
 
@@ -2631,14 +2713,15 @@ Server(服务器)通过自己的私钥，对信息解密，至此得到了**对�
 
 **中间人攻击过程如下：**
 
+- 客户端想服务端请求公钥
 - 服务器向客户端发送公钥。
 - 攻击者截获公钥，保留在自己手上。
 - 然后攻击者自己生成一个【伪造的】公钥，发给客户端。
-- 客户端收到伪造的公钥后，生成加密hash值发给服务器。
-- 攻击者获得加密hash值，用自己的私钥解密获得真秘钥。
+- 客户端收到伪造的公钥后，生成加密对称密钥发给服务器。
+- 攻击者获得加密对称密钥，用自己的私钥解密获得真秘钥。
 - 同时生成假的加密hash值，发给服务器。
 - 服务器用私钥解密获得假秘钥。
-- 服务器用加秘钥加密传输信息
+- 服务器用假秘钥加密传输信息
 
 <img src="images/72.png" alt="img" style="zoom:50%;" />
 
@@ -2779,14 +2862,18 @@ React使用双缓存技术来实现更新逻辑，就像canvas绘制动画的双
      - completeUnitOfWork 阶段对于组件处理 context ；对于元素标签初始化，会创建真实 DOM ，将子孙 DOM 节点插入刚生成的 DOM 节点中；会触发 diffProperties 处理 props ，比如事件收集，style，className 处理，在15章讲到过。
 2. commit阶段（处理生命周期和副作用钩子、更新中增删改节点和一些细节的处理，比如Ref）：
    - **`Before mutation` 阶段（执行 DOM 操作前）**
-     - 因为 Before mutation 还没修改真实的 DOM ，是获取 DOM 快照的最佳时期，如果是类组件有 getSnapshotBeforeUpdate ，那么会执行这个生命周期。
+     - 因为 Before mutation 还没修改真实的 DOM ，是获取 DOM 快照的最佳时期，如果是类组件有 **getSnapshotBeforeUpdate** ，那么会执行这个生命周期。
      - 会调度 useEffect的优先级 ，在生命周期章节讲到 useEffect 是采用异步调用的模式，其目的就是防止同步执行时阻塞浏览器做视图渲染。
    - **`mutation` 阶段（执行 DOM 操作）**
      - 置空 ref ，在 ref 章节讲到对于 ref 的处理。
      - 对新增元素，更新元素，删除元素。进行真实的 DOM 操作。
    - **`layout` 阶段（执行 DOM 操作后**
-     - 对于类组件，会执行生命周期，setState 的callback，对于函数组件会执行 useLayoutEffect 钩子。
+     - 对于类组件，会执行生命周期（**componentDidMount、componentDidUpdate、useLayoutEffect**），setState 的callback，对于函数组件会执行 useLayoutEffect 钩子。
      - 如果有 ref ，会重新赋值 ref 。
+   
+   绘制完成后
+   
+   - useEffect
 
 ### 4. Diff算法（调和的具体实现）
 
@@ -2847,9 +2934,9 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
 4. newChild中第三个位置的D在oldFiber中的index=3 > lastPlacedIndex=2不需要移动，lastPlacedIndex=3
 5. newChild中第四个位置的B在oldFiber中的index=1 < lastPlacedIndex=3,移动到最后
 
-### 5. 生命周期
+### 5. 生命周期（**）
 
-组件的生命周期可以分为三个阶段：组件初始化、组件更新、组价销毁。
+实际上生命周期函数的执行是穿插在fiber建立和更新中过程中执行的。组件的生命周期可以分为三个阶段：组件初始化、组件更新、组价销毁。
 
 <img src="images/_27.png" alt="_27" style="zoom:50%;" />
 
@@ -2859,15 +2946,20 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
 
 #### 初始化阶段
 
+**fiber中的render流程**
+
 1. constructor执行
-   - 执行一些初始化工作：初始化state、处理组件的事件（绑定this，防抖节流）
+   - 执行一些初始化工作：初始化state、处理组件的事件（绑定this，防抖节流），为生成fiber做准备。
 2. getDerivedStateFromProps（nextProps，Prevstate）返回值将和state合并作为新的state给组件实例使用
    - 在初始化或者更新阶段接受父组件的props，对props进行格式化或过滤等操作，返回的值作为新的state合并到state中。
    - 用来代替componentWillMount、componentWillReceiveProps
    - 返回值与state合并完，可以作为shouldComponentUpdate第二个参数newState用于判断是否渲染组件
 3. render函数执行
    - render函数执行就是调用React.createElement创建React element对象，所以在render函数里可以做一些,**createElement创建元素** , **cloneElement 克隆元素** ，**React.children 遍历 children** 的操作。
-4. componentDidMount执行
+
+**fiber中的commit流程**
+
+1. componentDidMount执行
    - 和componentDidUpdate一样，执行一些基于DOM的操作，DOM事件监听
    - ajax获取数据渲染视图
 
@@ -2877,21 +2969,27 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
 
 #### 更新节点
 
+
+
+**fiber中的render流程**
+
 1. getDerivedStateFromProps
 
 2. shouldComponentUpdate（newProps，newState，nextContext)
 
    - 一般用于性能优化，返回值表示是否重新渲染类组件。如果有getDerivedStateFromProps，其返回值会与state合并作为newState供该函数使用。
 
-3. render函数执行
+3. render函数执行，生成react Element对象，也就是JSX对象，用于与current fiber做对比，生成workInProgress fiber用于渲染，这一步主要目的是diff差异复用节点。
 
-4. getSnapShotBeforeUpdate（prevProps，PrevState）
+**fiber中的commit流程**
+
+1. getSnapShotBeforeUpdate（prevProps，PrevState）
 
    - 这个生命周期意义就是配合componentDidUpdate 一起使用，计算形成一个 snapShot 传递给 componentDidUpdate 。保存一次更新前的信息。
 
-5. 更新dom
+2. 更新dom
 
-6. componentDidUpdate（prevProps,prevState,snapshot)
+3. componentDidUpdate（prevProps,prevState,snapshot)
 
    - 此时 DOM 已经更新，可以直接获取 DOM 最新状态。这个函数里面如果想要使用 setState ，一定要加以限制，否则会引起无限循环。
    - 接受 getSnapshotBeforeUpdate 保存的快照信息。
@@ -2902,28 +3000,29 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
 
    1. componentWillUnmount
    2. 卸载组件和DOM
-   
+
    #### 函数组件生命周期
-   
-   1. useLayoutEffect在dom更新之后，浏览器绘制之前执行，这样方便修改DOM获取DOM信息，这样浏览器只绘制一次。而useEffect在浏览器绘制之后执行，如果修改DOM会造成再次回流重绘，世界上会有闪现的突兀效果。
+
+   1. useLayoutEffect在dom更新之后，浏览器绘制之前执行，这样方便修改DOM获取DOM信息，这样浏览器只绘制一次。而useEffect在浏览器绘制之后执行，如果修改DOM会造成再次回流重绘，视觉上会有闪现的突兀效果。
    2. componentDidMount 替代方案：useEffect依赖数组置空
    3. componentWillUnmount 替代方案：返回一个函数用于卸载任务并将依赖数组置空
    4. componentDidUpdate 替代方案：不设置依赖项，每次都会调用
-   
+   5. shouldComponentUpdate替代方案，设置依赖项，依赖项变化才更新
+
    ### 6. Hash路由和History路由
-   
+
    react路由有两种方式，hash和history路由。
-   
+
    以history路由为例，当url改变，首先触发history相关的事件popstate，触发回调函数。回调函数中会调用setstate更新location路由信息，然后在Router组件通过context传递给route组件匹配，匹配的route组件会渲染对应的组件。
-   
+
    如果是调用history.push来改变路由，实际上就是调用window.history.pushState改变url，同时不刷新页面。然后调用setState，后续流程相同。
-   
+
    hash路由原理也一样，只是路由改变调用的接口是window.location.hash，触发的事件是hashchange。
-   
+
    ![img](images/ac7ed7a701714650b55c9193db2220eatplv-k3u1fbpfcp-zoom-in-crop-mark1304000-165832637173113.awebp)
-   
+
    **区别：**
-   
+
    1. hash路由是通过调用window.location.hash和window.location.raplace来修改URL触发window.hashchange事件，后者无历史记录。
    2. history路由时通过调用widnow.history.pushState和window.location.replaceState来修改浏览历史触发window.onpopstate事件。后者是替换当前历史。
    3. **history路由刷新后会重新get请求，所以实际项目中要在后台要将所有访问指向index.html，否则刷新后会显示404等错误。**
@@ -2934,33 +3033,33 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
    8. **history通过state状态对象可以添加任何类型的数据到记录栈中，而hash只能添加短字符串。**
    9. **history可以额外设置title属性供后续使用。**
    10. 先有hash后有history，前者兼容IE8以上后者IE10以上。
-   
+
    ### 7 immutable数据的作用
-   
+
    #### 为什么需要immutable数据
-   
+
    React的更新是依赖于新旧props，新旧state的对比。如果props、state是原始值，原始值的对比是可以直接得出结果的。然而引用值的对比，比较的是引用地址，那么如果修改了一个对象的属性，对象的引用是不变的。如果要改变对象的引用地址，就得把对象深拷贝一份，深拷贝需要递归，非常消耗性能，并且还浪费内存。而React种渲染依赖与新旧props，state对比。性能的优化手段，例如React.memo缓存、pureComponent、useMemo、useCallback、shouldcomponentupdate、useEffect都需要对比依赖数组种的数据或者新旧state、props。所以React耗时三年打造了immutable.js。
-   
+
    #### 什么是immutable数据
-   
+
    一旦创建就不能再被更改，对于immutable的任意一处更改都会返回一个新的immutable对象，同时保证旧数据不变且可用。
-   
+
    #### 优点
-   
+
    1. immutable数据降低了可变数据带来的复杂度，比如向一个函数传入引用对象，不能保证原有对象保持不变。
    2. immutable数据尽量复用内层，新的数据是在旧数据基础上生成的，两者公用某些数据。
    3. immutable数据为撤销重做提供了可能，只需要把immutable每次改变返回的数据存到一个数组，这就是其历史记录。
    4. 并发安全，传统的并发为了保证数据不一致的问题发明了各种锁，而immutable数据天然不可变，不需要并发锁。
    5. immutable数据拥抱函数式编程，Immutable 本身就是函数式编程中的概念，纯函数式编程比面向对象更适用于前端开发。因为只要输入一致，输出必然一致，这样开发的组件更易于调试和组装。
-   
+
    #### 缺点
-   
+
    1. 需要学习新的API：数据的修改和创建要调用新的API。
    2. 增加了资源的大小：需要引入immutable数据的库。
    3. 容易与原生对象混淆，给开发带来难度。
-   
+
    #### 现有的immutable库
-   
+
    1. immutable.js
    2. seamless-immutable.js
 
@@ -3122,7 +3221,7 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 
 ## Vue
 
-### 1. 说说Vue2.0和Vue3.0有什么区别
+### 1. 说说Vue2.0和Vue3.0有什么区别（*）
 
 重构响应式系统，使用Proxy替换Object.defineProperty，使用Proxy优势：
 
@@ -3143,7 +3242,7 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 
 使用Typescript替换Flow
 
-### 2. Vue3和Vue2响应式区别
+### 2. Vue3和Vue2响应式区别（*）
 
 **Vue2响应式缺点：**
 
@@ -3172,7 +3271,7 @@ return Reflect.deleteProperty(target， prop)
 proxy.name = 'tom'
 ```
 
-### 3. Vue生命周期
+### 3. Vue生命周期（*）
 
 **Vue2生命周期：**
 
@@ -3284,14 +3383,14 @@ v-bind和v-model都是vue中绑定数据的指令，一个用于绑定数据、�
 2. v-model可以增加lazy、number、trim等修饰符对回调函数做一些事情。
 3. v-bind一般用于绑定文本、属性、表达式，属于单项绑定。
 
-### 9. vue通信方式
+### 9. vue通信方式（**）
 
 #### 父子组件通信
 
 1. props和$emit自定义事件回调。
 2. $children属性和`\$parent属性获取父子组件的实例对象，然后就可以传值
 3. ref引用，通过ref引用获取组件实例然后传值。
-4. 事件总线EventBus，通过公共的时间总线来传值。
+4. 事件总线EventBus，通过公共的事件总线来传值。
 5. provide注入数据、inject获取数据。
 6. Vuex公共状态管理
 
@@ -3592,6 +3691,91 @@ v-bind和v-model都是vue中绑定数据的指令，一个用于绑定数据、�
 2. 给el-select组件的onChange添加搜索回调，将搜索得到的结果绑定到el-options用于渲染选项，并绑定跳转实践。
 3. 监听语言变化，重新计算数据源，实现国际化切换。
 
+#### 14. Axios如何封装
+
+导入axio模块
+
+```js
+import axios from 'axios'
+```
+
+根据不同的模式，请求不同的URL
+
+```js
+// 根据不同的模式，请求不同的baseURL
+const service = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API,
+  timeout: 5000
+})
+```
+
+注册请求拦截
+
+```js
+// 请求拦截器 拦截请求，做一下操作，比如设置响应头的字段等
+service.interceptors.request.use(
+  config => {
+    // 在这个位置需要统一的去注入token
+    if (store.getters.token) {
+      if (isCheckTimeout()) {
+        // 检查token是否失效
+        // 登出操作
+        store.dispatch('user/logout')
+        return Promise.reject(new Error('token 失效'))
+      }
+      // 如果token存在 注入token
+      config.headers.Authorization = `Bearer ${store.getters.token}`
+    }
+    // 配置 icode
+    config.headers.icode = 'B9292E99276D75B4'
+    // 配置接口国际化
+    config.headers['Accept-Language'] = store.getters.language
+    return config // 必须返回配置
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+```
+
+注册响应拦截器
+
+```
+// 响应拦截器 在收到响应后拦截数据，对数据做一些处理
+service.interceptors.response.use(
+  response => {
+    const { success, message, data } = response.data
+    //   要根据success的成功与否决定下面的操作
+    if (success) {
+      return data // 请求成功，返回数据
+    } else {
+      // 业务错误
+      ElMessage.error(message) // 在element提示组件中提示错误消息
+      return Promise.reject(new Error(message)) // 抛出错误
+    }
+  },
+  error => {
+    // 处理 token 超时问题
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.code === 401
+    ) {
+      // token超时
+      store.dispatch('user/logout')
+    }
+    ElMessage.error(error.message) // 提示错误信息
+    return Promise.reject(error)
+  }
+)
+```
+
+导出实例
+
+```js
+export default service
+```
+
 
 
 ## 移动端开发
@@ -3603,7 +3787,7 @@ v-bind和v-model都是vue中绑定数据的指令，一个用于绑定数据、�
 - 为了适应各种移动端设备，完美呈现应有的布局效果
 - 各个移动端设备，分辨率大小不一致，网页想铺满整个屏幕，并在各种分辨下等比缩放
 
-###  适配方案
+####  适配方案
 
 - 固定高度，宽度百分比适配-布局非常均匀，适合百分比布局
 - 固定宽度，改变缩放比例适配-什么情况都可以
@@ -3882,7 +4066,7 @@ https://interview2.poetries.top/fe-blog-docs/blog-docs/react/-%E4%BB%8E%E9%9B%B6
 
 概念：react在客户端执行，消耗客户端的性能。客户端渲染
 
-## Webpack
+## Webpack（*）
 
 ### 1.打包原理
 
@@ -4299,9 +4483,9 @@ https://interview2.poetries.top/docs/excellent.html#_31-1-udp
    2. TCP头部开销UDP大，传输效率低。
 4. 单一的传输方式：一对一的传输方式。
 
-### 3.三次握手和四次挥手
+### 3.三次握手和四次挥手(*)
 
-**三次握手的原因：**三次握手可以保证失效的报文不起作用，假如网络不好，浏览器发送了的第一个报文滞留在网络中，过了一段时间，这个滞留的报文到达了后端，如果后端发送确认报文连接就建立，那么此时对于浏览器这个时效的报文是不起作用的，后端认为新的连接已经建立，就会一直等待前端发来数据，白白浪费了后端的资源。形象的比喻就是两个人抛东西。
+**三次握手的原因：**三次握手可以保证失效的报文不起作用，假如网络不好，浏览器发送了的第一个报文滞留在网络中，过了一段时间，这个滞留的报文到达了后端，如果后端发送确认报文连接就建立，那么此时对于浏览器这个时效的报文因为超时是不起作用的，后端认为新的连接已经建立，就会一直等待前端发来数据，白白浪费了后端的资源。
 
 <img src="https://s.poetries.work/images/20210326151731.png" alt="img" style="zoom: 25%;" />
 
@@ -4310,6 +4494,64 @@ https://interview2.poetries.top/docs/excellent.html#_31-1-udp
 **四次挥手的原因**：三次握手时，服务器收到客户端的SYN连接请求报文后可以直接发送SYN+ACK报文。但是在四次挥手时，后端收到前端的FIN报文，此时后端的数据不一定发送完了，所以不能立即关闭连接，所以先发一个ACK报文表示收到前端的关闭请求，然后将数据发送完之后再发送FIN报文，所以有四次连接。并且前端最后发送完ACK报文后等待两个最大报文存活时间才关闭连接，为的是确保后端收到了最后的报文，如果没收到会重发。还有一个就是让所有报文在网络中消耗掉，确保没有旧的报文干扰。
 
 <img src="https://s.poetries.work/images/20210326151917.png" alt="img" style="zoom: 25%;" />
+
+### 4.TCP 的拥塞控制是怎么实现的？
+
+在某段时间，若对网络中某一资源的需求超过了该资源所能提供的可用部分，网络的性能就要变坏。这种情况就叫拥塞。拥塞控制就是为了防止过多的数据注入到网络中，这样就可以使网络中的路由器或链路不致过载。拥塞控制所要做的都有一个前提，就是网络能够承受现有的网络负荷。拥塞控制是一个全局性的过程，涉及到所有的主机，所有的路由器，以及与降低网络传输性能有关的所有因素。相反，流量控制往往是点对点通信量的控制，是个端到端的问题。流量控制所要做到的就是抑制发送端发送数据的速率，以便使接收端来得及接收。
+
+![TCP的拥塞控制](images/tcp-congestion-control.png)
+
+为了进行拥塞控制，TCP 发送方要维持一个 **拥塞窗口(cwnd)** 的状态变量。拥塞控制窗口的大小取决于网络的拥塞程度，并且动态变化。发送方让自己的发送窗口取为拥塞窗口和接收方的接受窗口中较小的一个。
+
+TCP 的拥塞控制采用了四种算法，即 **慢开始** 、 **拥塞避免** 、**快重传** 和 **快恢复**。在网络层也可以使路由器采用适当的分组丢弃策略（如主动队列管理 AQM），以减少网络拥塞的发生。
+
+- **慢开始：**  慢开始算法的思路是当主机开始发送数据时，如果立即把大量数据字节注入到网络，那么可能会引起网络阻塞，因为现在还不知道网络的符合情况。经验表明，较好的方法是先探测一下，即由小到大逐渐增大发送窗口，也就是由小到大逐渐增大拥塞窗口数值。cwnd 初始值为 1，每经过一个传播轮次，cwnd 加倍。
+- **拥塞避免：** 拥塞避免算法的思路是让拥塞窗口 cwnd 缓慢增大，即每经过一个往返时间 RTT 就把发送放的 cwnd 加 1.
+- **快重传与快恢复：** 在 TCP/IP 中，快速重传和恢复（fast retransmit and  recovery，FRR）是一种拥塞控制算法，它能快速恢复丢失的数据包。没有 FRR，如果数据包丢失了，TCP  将会使用定时器来要求传输暂停。在暂停的这段时间内，没有新的或复制的数据包被发送。有了  FRR，如果接收机接收到一个不按顺序的数据段，它会立即给发送机发送一个重复确认。如果发送机接收到三个重复确认，它会假定确认件指出的数据段丢失了，并立即重传这些丢失的数据段。有了 FRR，就不会因为重传时要求的暂停被耽误。  当有单独的数据包丢失时，快速重传和恢复（FRR）能最有效地工作。当有多个数据信息包在某一段很短的时间内丢失时，它则不能很有效地工作。
+
+### 5.TCP 如何实现流量控制？
+
+**TCP 利用滑动窗口实现流量控制。流量控制是为了控制发送方发送速率，保证接收方来得及接收。** 接收方发送的确认报文中的窗口字段可以用来控制发送方窗口大小，从而影响发送方的发送速率。将窗口字段设置为 0，则发送方不能发送数据。
+
+**为什么需要流量控制?** 这是因为双方在通信的时候，发送方的速率与接收方的速率是不一定相等，如果发送方的发送速率太快，会导致接收方处理不过来。如果接收方处理不过来的话，就只能把处理不过来的数据存在 **接收缓冲区(Receiving Buffers)** 里（失序的数据包也会被存放在缓存区里）。如果缓存区满了发送方还在狂发数据的话，接收方只能把收到的数据包丢掉。出现丢包问题的同时又疯狂浪费着珍贵的网络资源。因此，我们需要控制发送方的发送速率，让接收方与发送方处于一种动态平衡才好。
+
+这里需要注意的是（常见误区）：
+
+- 发送端不等同于客户端
+- 接收端不等同于服务端
+
+TCP 为全双工(Full-Duplex,  FDX)通信，双方可以进行双向通信，客户端和服务端既可能是发送端又可能是服务端。因此，两端各有一个发送缓冲区与接收缓冲区，两端都各自维护一个发送窗口和一个接收窗口。接收窗口大小取决于应用、系统、硬件的限制（TCP传输速率不能大于应用的数据处理速率）。通信双方的发送窗口和接收窗口的要求相同
+
+**TCP 发送窗口可以划分成四个部分** ：
+
+1. 已经发送并且确认的TCP段（已经发送并确认）；
+2. 已经发送但是没有确认的TCP段（已经发送未确认）；
+3. 未发送但是接收方准备接收的TCP段（可以发送）；
+4. 未发送并且接收方也并未准备接受的TCP段（不可发送）。
+
+**TCP发送窗口结构图示** ：
+
+![TCP发送窗口结构](images/tcp-send-window.png)
+
+- **SND.WND** ：发送窗口。
+- **SND.UNA**：Send Unacknowledged 指针，指向发送窗口的第一个字节。
+- **SND.NXT**：Send Next 指针，指向可用窗口的第一个字节。
+
+**可用窗口大小** = `SND.UNA + SND.WND - SND.NXT` 。
+
+**TCP 接收窗口可以划分成三个部分** ：
+
+1. 已经接收并且已经确认的 TCP 段（已经接收并确认）；
+2. 等待接收且允许发送方发送 TCP 段（可以接收未确认）；
+3. 不可接收且不允许发送方发送TCP段（不可接收）。
+
+**TCP 接收窗口结构图示** ：
+
+![TCP接收窗口结构](images/tcp-receive-window.png)
+
+**接收窗口的大小是根据接收端处理数据的速度动态调整的。** 如果接收端读取数据快，接收窗口可能会扩大。 否则，它可能会缩小。
+
+另外，这里的滑动窗口大小只是为了演示使用，实际窗口大小通常会远远大于这个值。
 
 ## 看过的书籍
 
