@@ -2,14 +2,14 @@
 
 ## CSS
 
-### 1.正方形盒子九宫格排列
+### 1.正方形盒子九宫格排列（*）
 
 1. flex: 设置增长因子、缩减因子为1、弹性基准为33.33%。高度也是33.33%。
 2. float:左浮动，设置子元素的宽高为33.33%。并且通过::after伪元素清除后续浮动。
 3. grid：设置行列模板都为1fr。
 4. inline-block：子元素宽高33.33%。注意通过letter-spacing、word-spacing、font-size等消除边距，并且vertical-align对其top，否则上下有间隙。
 
-### 2.水平垂直居中（*）
+### 2.水平垂直居中（*\*）
 
 1. 知道内部元素与外部元素的宽高，通过设置计算设置margin即可。
 2. 父元素display:grid、align-items:center、justify-items:center。
@@ -21,7 +21,7 @@
 8. 父元素position：relative，子元素 position: absolute、left: 50%、 top: 50%、transfrom: translate(-50%, -50%)。
 9. 父元素position：relative，子元素position: absolute、top: 0、left: 0、right: 0、margin: auto。
 
-### 3. Flex布局
+### 3. Flex布局(*)
 
 **概念：**给某个元素设置了display：flex，那么该元素成了弹性容器，容器内的元素成了弹性子元素。容器内的元素在主轴上依次排列，如果不够排列就往副轴方向换行。弹性布局使得我们可以通过设置弹性容器来轻松操控容器内所有元素的布局，相比于浮动布局弹性布局更加精确，方便。
 
@@ -136,7 +136,7 @@ meta标签的content属性里包含两个选项。首先，它告诉浏览器当
 
 ❑ 不要忘记给视口添加meta标签。
 
-### 6. 选择器和优先级（*）
+### 6. 选择器和优先级（**）
 
 #### 1.选择器类型
 
@@ -163,11 +163,11 @@ meta标签的content属性里包含两个选项。首先，它告诉浏览器当
 层叠式样式的优先级主要考虑四个点。
 
 1. important标记：有import标记的要大于没有的，有import的外部样式要大于内联样式。
-2. 来源：读者的！import>创作者的！import>创作者>读者>用户代理
+2. 来源：读者的！import>创作者的！import>创作者>读者>客户端默认的
 3. 权重：权重就是根据选择的粒度计算出的权重，选择的粒度越小权重越大，按权重值排序
 4. 位置：同等权重下后面的要覆盖前面的
 
-### 7. position定位（**）
+### 7. position定位（**\*）
 
 position用来设置元素的定位，有static、relative、absolute、fixed、sticky等值。
 
@@ -340,30 +340,32 @@ css3规定伪类用：，伪元素用：：。在这之前都是：。.
 
 总结：使用transfrom scale/svg的方法兼容性和效果都是最好的，svg可以支持复杂的图形，所以**在viewport是1的情况下，可以使用transform/SVG画0.5px，而如果viewport的缩放比例不是1的话，那么直接画1px即可**。
 
-### 14 transform
+### 14 transform(*)
+
+transform可以对元素进行变换，使得元素可以进行坐标移动以外的复杂变化，而且不局限于二维。
 
 #### 变形函数
 
 1. 位移：
-   - translate()
+   - translate(长度值)
    - translateX()
    - translateY()
    - translateZ()
    - translate3d()
 2. 缩放
-   - scale()
+   - scale(整数或者小数)
    - scaleX()
    - scaleY()
    - scaleZ()
    - scale3d()
 3. 旋转
-   - rorate()
+   - rorate(deg、grad、rad、turn)
    - rotateX()
    - rotateY()
    - rotateX()
    - rotate3d()
 4. 倾斜
-   - skew()
+   - skew(deg、grad、rad、turn)
    - skewX()
    - skewY()
 5. 其它变形
@@ -375,7 +377,7 @@ css3规定伪类用：，伪元素用：：。在这之前都是：。.
 
 transform-origin: 长度值 长度值
 
-### 15 transition
+### 15 transition（*）
 
 ##### 如何触发过渡：
 
@@ -396,10 +398,10 @@ document.querySelector('div').addEventListener('transitioned', function(e){conso
 
 1. 设置一个值表示所有过渡属性延迟的时间
 2. 设置两个值，但是有两个以上的过渡属性，则以奇偶延迟
-3. 设置匹配的多个值，则是每个过渡属性开始过渡的延迟时间。设置一个过度延迟事件的序列可以让过度一个接着一个开始。
+3. 设置匹配的多个值，则是每个过渡属性开始过渡的延迟时间。设置一个过度延迟时间的序列可以让过度一个接着一个开始。
 4. 延迟时间如果为负值，且绝对值小于过渡时间，则从两者求和的位置开始过渡。如果绝对值大于过渡时间，则过度无效。
 
-### 16 animation
+### 16 animation（*）
 
 ##### 如何触发动画：
 
@@ -726,7 +728,7 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 
   <img src="https://s.poetries.work/gitee/2020/09/111.png" alt="img" style="zoom: 33%;" />
 
-### CSS 隐藏元素的方法（*）
+### 21. CSS 隐藏元素的方法（*）
 
 主要分三种，消失、移动、缩放三个思路。
 
@@ -741,7 +743,244 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 9. transform：scale(0,0)，缩放为0，仍然占据空间，但是不会响应监听的事件。
 10. width\height：0，使得元素不显示。
 
+### 22. display
+
+1. contents：只显示内部元素，该元素好似一个没有样式的空元素，一般在React组件中用来当最外层的Wrapper
+2. flex
+3. inline-block
+4. inline-flex
+5. inline-grid
+6. inline-table
+7. none
+8. list-item：展示为列表项
+9. table、table-cel
+
+### 23. 块级元素和行内元素
+
+块级
+
+1. article
+2. aside
+3. header
+4. footer
+5. nav
+6. section
+7. div
+8. form
+9. h1-h6
+10. ul、li、ol
+11. p
+12. table
+13. video
+14. canvas
+
+行内
+
+1. a
+2. br
+3. buttom
+4. img
+5. input
+6. label
+7. script
+8. select
+9. span
+10. textarea
+
+https://www.jianshu.com/p/f92802118178
+
+### 24. 媒体查询
+
+媒体查询可以检测媒体环境，然后使用特定的样式表。借助媒体查询可以实现响应式布局（在移动端先创建基本样式，然后适应复杂的桌面端）、实现渐进增强（创建最老版本支持的基本样式，然后进一步增加新特性）。
+
+#### 用法
+
+1. link元素的media属性
+2. style元素的media属性
+3. @import声明的媒体描述符部分
+4. @media声明的媒体描述符部分
+
+#### 媒体类型
+
+1. all
+2. print
+3. screen
+
+#### 媒体描述符
+
+@media print and (width:500px), device-width: 400px{
+
+}
+
+一个媒体描述符包含一个媒体类型和一个或者多个媒体特性列表，中间可以用逻辑关键字连接。
+
+#### 媒体特性描述符
+
+1. width、min-width、max-width、device-width，或者height。
+2. aspect-ratio（长宽比）、min-aspect-ratio、max-aspect-ratio、device-aspect-ratio
+3. color、min-color、max-color
+4. resolution、min-resolution、max-resolution
+
+#### 媒体查询中的逻辑关键字
+
+1. and
+2. not
+3. 分割的逗号相当于or
+4. only：在不支持媒体查询的浏览器中隐藏样式表
+
+#### 特性查询
+
+根据用户是否支持特定的CSS属性及其值来应用一段样式
+
+@support （display：grid) and (display:flex){
+
+}
+
+#### 特性查询比媒体查询多了一个取反关键字not
+
+#### 总结
+
+一般结合媒体查询和特性查询来实现多端响应式布局和浏览器渐进增强，媒体查询注重在查询支持的媒体，在响应式布局中应用多，因为响应式布局目的是响应不同的媒体。而特性查询注重在查询支持的css特性，在渐进增强中应用多，因为渐进增强目的是根据不同的浏览器版本支持的CSS特性应用不同的样式。
+
+
+
+
+
 ## HTML
+
+### 1.H5新增特性
+
+1. 新增section、article、nav、aside、header、footer等语义元素
+
+2. 新增表单元素
+
+   <img src="images/image-20220820210219457.png" alt="image-20220820210219457" style="zoom: 67%;" />
+
+3. 新增input属性![image-20220820210740958](images/image-20220820210740958.png)
+
+4. 新增原生多媒体嵌入标签audio、video
+
+5. 新增web存储：localStorage、sessionStorage
+
+6. 新增canvas元素，提供了一个绘画平面，可以用来完成以前flash完成的任务。
+
+7. 新增webWorker开启新线程
+
+8.   新增webSocket全双工通信
+
+9. 新增Geolocation获取地理位置
+
+10. 新增querySelector选择器选择接口
+
+11. 新增拖放属性好DataTransfer对象
+
+### 2.新增语义元素
+
+```html
+<section></section> 包含了一组内容及其标题。
+
+<article></article> 定义独立的内容
+
+<nav></nav> 定义导航链接部分区域
+
+<aside></aside>标签定义页面主区域内容之外的内容,与主区域的内容相关;侧边栏
+
+<header></header>
+
+<footer></footer>
+
+表引入外部内容
+
+<blockquote>块引用</blockquote>
+
+<details>详情展开</details>
+
+<fieldset>字段集</fieldset>
+
+<cite>引例</cite>
+
+<address></address>作者地址元素
+
+<time></time>
+
+<data value='433322'></data>将一个指定内容和机器可读的翻译联系在一起。value指定元素内容对应的机器可读的翻译
+
+<figure>img<figcaption>元素代表一段独立的内容，经常与说明caption配合使用</figcaption></figure>     figcaption定义figure的标题
+
+<mark></mark>元素 突出显示的文本通常和当前用户活动具有某种关联性，而<strong></strong>用来表示文本在上下文中的重要性
+
+<progress value='70' max='100'>70%</progess>进度条
+
+对于不支持HTML5的浏览器，默认为inline;只需另为定义一下section,article,aside,footer,header,nav,hgroup{display:block;}；2还需要引入goole的html5shiv.js
+
+如果禁用脚本：则加上noscript标签
+
+嵌入媒体：<audio  controls></audio>、<video></video>
+
+　　属性：src=url
+
+　　　　　controls:显示标准的HTML5控制器
+
+　　　　　autoplay:是音频自动播放
+
+　　　　　loop：音频重复循环播放
+
+　　　　　preload='auto'   表缓冲文件的属性，其值有：none不缓冲；auto缓冲音频文件；metadata缓冲文件的元数据
+
+<source src=''  type=''>来指定多个文件，为不同浏览器提供可支持的编码格式<video><source src='' type='video/ogg'...><source type='video/mp4' ...></video>　　
+
+js操作媒体var v=document.getElementByTagName('video')[0];
+
+　　　　　v.play(); v.pause(); v.volume+=0.1;  v.volume-=0.1;
+
+　　　　终止媒体下载：v.pause();v.src='';   or   v.removeAttribute('src');
+
+　　　　在媒体中查找：v.seekable.start();返回开始时间
+
+　　　　　　　　　　　v.seekable.end();返回结束时间
+
+　　　　　　　　　　　v.currentTime = 122;设定在122s
+
+　　　　　　　　　　　v.played.end(); 返回浏览器播放的秒数
+
+　　　　　　　　　　　v.muted;是否静音，默认为false，表示有声音
+
+　　　　　arc='..../...#20,50'　默认从20s 到50s；02:30:00
+
+　　　　　v.networkState 检测加载的媒体
+
+<track>元素被当作媒体元素audio video 的子元素来使用，允许指定计时字幕，如自动处理字幕／
+
+ 
+
+表单元素<input>type特性
+
+　　search:会自动取掉换行符
+
+　　tel:可加pattern  maxlength限制输入的值
+
+　　url
+
+　　email
+
+　　新增属性 <input list='brower'> <datalist id='brower'><option value='v1'><option value='v2'></datalist>
+
+　　　　　　pattern 正则表达式
+
+　　　　　　form  定义该input属于那个<form>元素的
+
+　　　　　　formmethord:覆盖get post
+
+　　　　　　formnovalidate 该input不验证
+
+<form>元素新特性：novalidate:设置了该特性不会再表单提交之前进行验证
+
+<datalist><output>
+
+placeholder   autofocus   
+```
+
+
 
 ## JavaScript
 
@@ -810,7 +1049,7 @@ Object的toString得到的字符串是[object Number]，常用于判断类型。
 
 而Function、Number、String等构造函数的toString重写了Object的原型上的toString，得到的是函数的字符串形式"function Number() { [native code] }"；
 
-### 6.this的指向问题（***）
+### 6.this的指向问题（*\*\*\*）
 
 JS中的this可以理解为执行环境或者调用对象。从物理的角度来看，在js的调用栈中的每个函数的执行上下文都有四个对象，变量环境、词法环境、外部环境、还有this对象，this就相当于这个函数的调用对象或者执行环境。
 
@@ -847,7 +1086,7 @@ function _new(fn, ...args) {
 
 ```
 
-### 7. 箭头函数和普通函数的区别(**)
+### 7. 箭头函数和普通函数的区别(\*\*\*\*)
 
 箭头函数和普通函数主要区别在于this对象的指向。
 
@@ -1074,6 +1313,10 @@ inheritPrototype(Child, Parent);
 
 在调用栈中的每个执行上下文中，存在变量环境、词法环境、外部环境、this对象。其中变量环境就是用来存储var声明的变量，词法环境用来存放let和const存放的变量。当JavaScript代码执行之前，会有个非常短暂的编译阶段，这个时候全局作用域中var声明的变量会被存到全局执行上下文的变量环境中，并赋值为undefined，let和const声明的变量会被放到词法环境中。而执行到每个函数的时候会把函数中var声明的变量赋值undefined放入变量环境，把let和const声明的变量放入词法环境中。从原理上来看let和const其实也实现了变量提升，只是let和const已经声明的变量在零时死区被屏蔽了。表现出来就是当代码执行的时候，如果在没有声明位置前使用var声明的变量会从变量环境中查找得到undefined的值，如果是let和const声明的变量，则存在词法环境中。在遍历变量环境中找不到所以会报错。
 
+##### 函数提升：
+
+函数提升的原理和变量提升一样，在JavaScript代码执行之前，会有个短暂的编译阶段，在编译阶段作用域中的函数和变量会被收集起来，存放到调用栈中的执行上下文中的变量环境中，并给变量赋值为undefined。
+
 <img src="https://s.poetries.work/gitee/2019/11/1.png" alt="img" style="zoom:50%;" />
 
 https://interview2.poetries.top/fe-base-docs/browser/part2/lesson09.html#javascript%E6%98%AF%E5%A6%82%E4%BD%95%E6%94%AF%E6%8C%81%E5%9D%97%E7%BA%A7%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84
@@ -1204,17 +1447,17 @@ ES6的作用域：
 3. join
 4. flat
 
-### 19. ES6新特性（*）
+### 19. ES6新特性（*\*）
 
 1. 块级作用域let和const：
 2. 模板字面量：模板字面量最大的威力就是标签模板，标签模板可以对模板中的字符串和变量进行处理返回新的字符串。例如styled-components就是利用标签模板实现在CSS代码中插入props变量的。
-3. 函数：形参默认值、不定参数（...)、展开运算符、name属性、块级函数、箭头函数。
+3. 函数：形参默认值、展开运算符、name属性、块级函数、箭头函数。
 4. 对象：属性值简写、方法简写、Object.is()、Object.assign()、super关键字（相当于Object.getPrototypeOf(this)。
 5. 解构：数组解构、对象解构。
 6. Symbol原始类型。
 7. Set、Map、WeakSet、WeakMap集合。
 8. 迭代器、生成器
-9. 类、继承：ES5中的继承是先创建子类然后调用父类构造器，ES6则是先创建父类this值，然后子类的构造函数再继承this对其进行修改。
+9. 薪资class关键字创建类、继承：ES5中的继承是先创建子类然后调用父类构造器，ES6则是先创建父类this值，然后子类的构造函数再继承this对其进行修改。
 10. 数组：Array.of、Array.from、find、findIndex、fill。
 11. Promise、async。
 12. Proxy、Reflection：Reflection的主要作用是将分散在Object、Function、或全局函数中的方法（apply、delete、get、set）整合一起，方便统一管理原生API，其次是配合Proxy对代理对象做一些操作，Reflect的返回值可以代替try catch。
@@ -1564,19 +1807,82 @@ Babel 是一个 JavaScript 编译器。他把最新版的 javascript 编译成�
 - **转换** 在这个阶段，`Babel` 接受得到 `AST` 并通过 `babel-traverse` 对其进行深度优先遍历，在此过程中对节点进行添加、更新及移除操作。这部分也是 `Babel` 插件介入工作的部分
 - **生成** 将经过转换的 `AST` 通过 `babel-generator`再转换成 `js` 代码，过程就是深度优先遍历整个 `AST`，然后构建可以表示转换后代码的字符串。
 
+### 28 Set、Map
+
+#### Set
+
+1. size
+2. add()
+3. clear()
+4. delete()
+5. forEach()
+6. has()
+7. keys()
+8. values()
+9. entries()
+
+#### Map
+
+1. size
+2. clear()
+3. delete()
+4. get()
+5. has()
+6. set()
+7. keys()
+8. values()
+9. entries()
+10. forEach()
+
+### [Objects 和 maps 的比较](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map#objects_和_maps_的比较)
+
+[`Object`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 和 `Map` 类似的是，它们都允许你按键存取一个值、删除键、检测一个键是否绑定了值。因此（并且也没有其他内建的替代方式了）过去我们一直都把对象当成 `Map` 使用。
+
+不过 `Map` 和 `Object` 有一些重要的区别，在下列情况中使用 `Map` 会是更好的选择：
+
+|              | Map                                                          | Object                                                       |
+| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 意外的键     | `Map` 默认情况不包含任何键。只包含显式插入的键。             | 一个 `Object` 有一个原型，原型链上的键名有可能和你自己在对象上的设置的键名产生冲突。                  **备注：**虽然从 ES5 开始可以用 [`Object.create(null)`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create) 来创建一个没有原型的对象，但是这种用法不太常见。 |
+| 键的类型     | 一个 `Map` 的键可以是**任意值**，包括函数、对象或任意基本类型。 | 一个 `Object` 的键必须是一个 [`String`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 或是 [`Symbol`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol)。 |
+| 键的顺序     | `Map` 中的键是有序的。因此，当迭代的时候，一个 `Map` 对象以插入的顺序返回键值。 | 虽然 `Object` 的键目前是有序的，但并不总是这样，而且这个顺序是复杂的。因此，最好不要依赖属性的顺序。                  自 ECMAScript 2015 规范以来，对象的属性被定义为是有序的；ECMAScript 2020 则额外定义了继承属性的顺序。参见 [OrdinaryOwnPropertyKeys](https://tc39.es/ecma262/#sec-ordinaryownpropertykeys)          和          [EnumerateObjectProperties](https://tc39.es/ecma262/#sec-enumerate-object-properties) 抽象规范说明。但是，请注意没有可以迭代对象所有属性的机制，每一种机制只包含了属性的不同子集。（[`for-in`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in)          仅包含了以字符串为键的属性；[`Object.keys`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys)          仅包含了对象自身的、可枚举的、以字符串为键的属性；[`Object.getOwnPropertyNames`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames)          包含了所有以字符串为键的属性，即使是不可枚举的；[`Object.getOwnPropertySymbols`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertySymbols)          与前者类似，但其包含的是以 `Symbol` 为键的属性，等等。） |
+| Size         | `Map` 的键值对个数可以轻易地通过 [`size`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/size) 属性获取。 | `Object` 的键值对个数只能手动计算.                           |
+| 迭代         | `Map` 是 [可迭代的](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols) 的，所以可以直接被迭代。 | `Object` 没有实现 [迭代协议](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)，所以使用 JavaSctipt 的 [for...of](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...of) 表达式并不能直接迭代对象。                  **备注：**                      对象可以实现迭代协议，或者你可以使用 [`Object.keys`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys) 或 [`Object.entries`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/entries)。                          [for...in](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in)              表达式允许你迭代一个对象的*可枚举*属性。 |
+| 性能         | 在频繁增删键值对的场景下表现更好。                           | 在频繁添加和删除键值对的场景下未作出优化。                   |
+| 序列化和解析 | 没有元素的序列化和解析的支持。        （但是你可以使用携带 *replacer* 参数的 [`JSON.stringify()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) 创建一个自己的对 `Map` 的序列化和解析支持。参见 Stack Overflow 上的提问：[How do you JSON.stringify an ES6 Map?](https://stackoverflow.com/q/29085197/)） | 原生的由 [`Object`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 到 JSON 的序列化支持，使用 [`JSON.stringify()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)。        原生的由 JSON 到 [`Object`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 的解析支持，使用 [`JSON.par`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) |
+
+### 29 WeakMap、WeakSet
+
+#### Weak Map
+
+1. Weak Map的键只能说引用类型
+2. Weak Map的键是弱引用，不会影响垃圾回收机制回收对象。
+3. 因为key是弱引用，所以key是不可枚举的
+
+应用：避免强引用导致的内存泄漏。
+
+#### Weak Set
+
+1. 只能存对象，是对象的集合
+2. 对其中的对象是弱引用，不会影响垃圾回收机制回收对象。
+3. 因为key是弱引用，所以key是不可枚举的
+
+应用：检测循环引用
+
 ## 浏览器
 
-### 1.跨域原理
+### 1.跨域原理(**)
 
-跨域指的是：只要协议、域名、端口有任何一个不同，都被当作是不同的域
+跨域指的是：只要协议、域名、端口有任何一个不同，都被当作是不同的域。
+
+同源策略：是浏览器最核心也是最基本的安全策略。同源限制相同域名下才能访问cookie、localStorage、sessionStorage，才能接受返回的数据，才能执行相同域名下的脚本。本质是是浏览器不接收非同源的响应。
 
 跨域的方法：
 
 1. iframe设置domain：网页a(URL http://a.com/foo)里面设置一个iframe元素，元素的src为http://b.a.com/bar。然后在网页b(http://b.a.com/bar)中设置domain为上级域名a.com就可以实现跨域了
 
-2. 有src属性或者href的标签可以跨域获取资源：比如img、script、audio、video、link等；
+2. 有src或者href属性的标签可以跨域获取资源：比如img、script、audio、video、link、iframe等；
 
-3. 常用的就是jsonp：先设置一个script标签，里面定义一个函数fn。再设置一个script标签，src中携带query参数callback=fn。然后后端收到了请求，解析出参数中的fn，通过拼接字符串传入参数返回。然后第二个script收到返回的数据执行了带参数的函数。
+3. 常用的就是jsonp：在script脚本中里面定义一个函数fn。然后创建一个script标签，标签src属性中携带query参数为callback=fn。然后将script标签添加到head中，就会向后端发送get请求。后端收到了请求，解析出参数中的fn，通过拼接Jason数据到参数中返回。然后第二个script收到返回的数据执行了带参数的函数。
 
    - 优点：script标签基本上所有浏览器都支持，所以jsonp兼容性好，不需要XMLHttpRequest就可以发送请求。
 
@@ -1591,7 +1897,7 @@ Babel 是一个 JavaScript 编译器。他把最新版的 javascript 编译成�
 
 5. 反向代理：跨域主要是浏览器接受数据有限制，服务器和服务器之间不跨域。给前端设置一个代理服务器，前端的请求转发到后端，然后再将后端的响应转发前端，代理服务器会将响应头的域名设置与前端同源；
 
-### 2.浏览器存储（*）
+### 2.浏览器存储（**）
 
 | 方式           | 时效                     | 大小                    | 作用域         | 存在地点             |
 | -------------- | ------------------------ | ----------------------- | -------------- | -------------------- |
@@ -1602,7 +1908,7 @@ Babel 是一个 JavaScript 编译器。他把最新版的 javascript 编译成�
 
 cookie、sessionStorage、localStorage使用方法，见代码；
 
-cookie的属性：name, value, expires, path, domain, secure（仅https发送到服务器），httpOnly（脚本不可读，只给HTTP发送），sameSite：strict。
+cookie的属性：name, value, expires, path, domain, secure（仅https发送到服务器），httpOnly（脚本不可读，只给HTTP发送），sameSite：strict（跨站点是完全静止cookie发送）、lax（除导航到目标网址的get让携带外，别的都不让）、none（第三方都可携带）。
 
 #### 应用场景
 
@@ -2296,7 +2602,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 2. requestIdelCallback（cb,{timeout:2000}）可以传入第二个参数设置超时时间，那么如果帧与帧直接没时间执行，就添加定时器任务。
 3. 使用webWork开启新线程执行定时任务。
 
-### 14. XSS和CSRF（***）
+### 14. XSS和CSRF（\*\*\*\*）
 
 **XSS(cross-site-scriting)：**跨站脚本攻击，利用网址的安全漏洞，通过url、输入框等合法操作，注入脚本修改用户的网页或者获取用户的cookie。
 
@@ -2310,13 +2616,21 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 比如某论坛上有系统漏洞，可以从发表评论里面插入JavaScript标签，那么黑客可以插入一段脚本，通过document.cookie获取用户cookie然后发送到自己的服务器上。
 
-防御方式：
+**防御方式：**
+
+防止脚本输入
 
 1. 对输入进行过滤，包括URL、查询关键字、post数据、input输入内容。
 2. 对于输入富文本，不能转义所有字符，那么可以通过白名单或者黑名单来过滤。
-3. 对于输出的内容做转义处理，使得恶意脚本不能执行。
-4. cookie设置httpOnly，使得脚本无法读取cookie。
-5. cookie设置secure，告诉浏览器只在请求https的时候发送cookie。
+
+已经输入，则防止脚本输出执行
+
+1. 对于输出的内容做转义处理，使得恶意脚本不能执行。
+
+防止脚本读取cookie和发送cookie
+
+1. cookie设置httpOnly，使得脚本无法读取cookie。
+2. cookie设置secure，告诉浏览器只在请求https的时候发送cookie。
 
 **CSRF(cross-site-request-forgery)：**跨站请求伪造，利用浏览器发送请求会自动携带cookie的特点，伪造用户身份发送请求。
 
@@ -2324,12 +2638,20 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 举例：邮箱中的钓鱼邮件，qq邮箱有很多钓鱼邮件。如果打开了邮件中的网页，就可以通过img标签或者表单向腾讯后台发送删除邮件请求，然后邮件就被删除了。如果浏览器在别的网页登录了淘宝，并且淘宝有安全漏洞，就可以借助邮件中的Img标签向淘宝后端发送转账请求。
 
-防御方式：
+**防御方式：**
+
+防止伪造请求
 
 1. get请求只请求数据，不修改数据。那么就可以避免那些通过带src属性的标签伪造的请求。
-2. 不让第三方网址访问用户的cookie，也就是cookie samesite属性设置为strict，只让和发送目标域名相同的网站携带cookie。
-3. 请求附带验证信息，比如验证码或者token，token不会被自动携带上，还有移动图案人机验证等。
-4. 服务器阻止第三方网址访问接口，或者对第三方网址不响应。
+2. 请求附带验证信息，比如验证码或者token，token不会被自动携带上，还有移动图案人机验证等。
+
+防止请求发送cookie
+
+1. 不让第三方网址访问用户的cookie，也就是cookie samesite属性设置为strict，只让和发送目标域名相同的网站携带cookie。
+
+服务器不接受伪造的请求
+
+1. 服务器阻止第三方网址访问接口，或者对第三方网址不响应。
 
 ### 15. requestIdleCallBack和requestAnimationFrame
 
@@ -2540,7 +2862,7 @@ export const transformIf = createStructuralDirectiveTransform(
 
 ![img](images/114.png)
 
-### 2. 常见的状态码：
+### 2. 常见的状态码（*）：
 
 **200：**
 
@@ -2561,6 +2883,10 @@ export const transformIf = createStructuralDirectiveTransform(
 - 401：发送的请求需要经过HTTP认证，或者认证失败（比如cookie跨域）。
 - 403：发送的请求被服务器拒绝，比如资源目录访问权限问题。
 - 404：服务器找不到请求的资源，例如SQL查库失败。
+
+#### 500
+
+
 
 ### 3. HTTP报文
 
@@ -2934,7 +3260,7 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
 4. newChild中第三个位置的D在oldFiber中的index=3 > lastPlacedIndex=2不需要移动，lastPlacedIndex=3
 5. newChild中第四个位置的B在oldFiber中的index=1 < lastPlacedIndex=3,移动到最后
 
-### 5. 生命周期（**）
+### 5. 生命周期（***）
 
 实际上生命周期函数的执行是穿插在fiber建立和更新中过程中执行的。组件的生命周期可以分为三个阶段：组件初始化、组件更新、组价销毁。
 
@@ -3063,7 +3389,7 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
    1. immutable.js
    2. seamless-immutable.js
 
-### 6. 函数组件和类组件
+### 6. 函数组件和类组件（*）
 
 #### 区别
 
@@ -3072,11 +3398,11 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
    - 函数组本质上是函数，在hooks出现之前函数组件是不具有状态和声明周期的，只用展示视图，作为视图组件，函数组件蕴含函数式编程的思想。
 2. 实现和管理状态的方式
    - 类组件执行构造函数的过程中会在实例上绑定props和context，初始化置空refs属性，在原型链上绑定setState和forceUpdate方法。
-   - 对于类组件，底层只需要实例化一次，实例中保存了组件的state、refs等状态。后续的每一次更新都是调用render方法以及对应的声明周期函数。
-   - 函数组件借助hooks与fiber建立联系，函数组件中useRef、useState、useContext、useEffect等钩子函数的回调中的数据会被绑定到fiber上。
+   - 对于类组件，底层只需要实例化一次，实例中保存了组件的state、refs等状态。后续的每一次更新都是调用render方法以及对应的生命周期函数。
+   - 函数组件借助hooks与fiber建立联系，函数组件中useRef、useState、useContext、useEffect等钩子函数的回调和状态数据都会被绑定到fiber对于的队列中，形成一个链表方便更新时连续调用。
    - 函数组件中每一次更新都是一次新函数的执行，内部的变量会被重新声明一次。因为没有实例对象，所以需要借助hooks和将状态和声明周期函数绑定到fiber上。
 3. 组件的强化
-   - 类组件可以通过继承来强化和复用已有组件，再进一步改造、强化。子组件通过继承可以控制父组件的render，共享父组件的方法等。
+   - 类组件可以通过继承来强化和复用已有组件。子组件通过继承可以控制父组件的render，共享父组件的方法等。
    - 函数组件可以借助hooks，来复用逻辑。自定义hooks可以很好地将逻辑分离封装起来，方便不同的组件复用相同的逻辑。
    - 在实现高阶组件上，类组件具有继承机制，比函数组件更强大，可以实现更复杂的逻辑。
 4. 组件的选择
@@ -3087,7 +3413,7 @@ newChildren遍历完，oldFiber没遍历完，在第一次遍历完成之后将o
    - 类组件需要实例化对象，占用内存更大。
    - 函数组件不需要实例化对象，占用内存小。
 
-### 7. 状态管理库
+### 7. 状态管理库（***）
 
 react是一个专注于视图层的库，react维护了状态到视图的映射关系，开发者只需要关注状态的变化。在小型应用中，单独使用react是没问题的，但是在复杂的应用中就会碰到状态管理方面的问题：
 
@@ -3098,16 +3424,6 @@ react是一个专注于视图层的库，react维护了状态到视图的映射�
 
 ##### 为什么要用redux
 
-组件之间复杂状态如何管理
-
-设想一种场景，就是一些通过 ajax 向服务器请求的重要数据，比如用户信息，权限列表，可能会被多个组件需要，那么如果每个组件初始化都请求一遍数据显然是不合理的。这时候常用的一种解决方案是，应用初始化时候，只请求一次数据，然后通过状态管理把数据存起来，需要数据的组件只需要从状态管理中‘拿’就可以了。
-
-<img src="images/9c8cdb1e78cb458eb20cabc6d5cf8da4tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="3.jpg" style="zoom:50%;" />
-
-复杂组件之间如何通信
-
-对于组件树形结构中，非同父节点之间的通信，常规的方式实现起来非常困难（props传递+状态提升、事件总线）。
-
 ##### React-Redux,Redux,React三者关系
 
 - `Redux`： 首先 Redux 是一个应用状态管理js库，它本身和 React 是没有关系的，换句话说，Redux 可以应用于其他框架构建的前端应用，甚至也可以应用于 Vue 中。
@@ -3116,22 +3432,21 @@ react是一个专注于视图层的库，react维护了状态到视图的映射�
 
 ##### **redux优势**
 
-redux的三大原则
+1. redux的三大原则切合react的核心思想
 
-- 1 单向数据流：整个 redux ，数据流向都是单向的，用一张官网的图片描述整个数据流动的流程。
+   -  单向数据流：整个 redux ，数据流向都是单向的，用一张官网的图片描述整个数据流动的流程。
 
-![redux.gif](images/d3775935f59d435fa6326dbcef90519etplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp)
+   - state 只读：在 Redux 中不能通过直接改变 state ，来让状态发生变化，如果想要改变 state ，那就必须触发一次 action ，通过 action 执行每个 reducer 
 
-- 2 state 只读：在 Redux 中不能通过直接改变 state ，来让状态发生变化，如果想要改变 state ，那就必须触发一次 action ，通过 action 执行每个 reducer 。
-- 3 纯函数执行：每一个 reducer 都是一个纯函数，里面不要执行任何副作用，返回的值作为新的 state ，state 改变会触发 store 中的 subscribe 。
+   - 纯函数执行：每一个 reducer 都是一个纯函数，里面不要执行任何副作用，返回的值作为新的 state ，state 改变会触发 store 中的 subscribe 。
 
-发布订阅思想
+2. 发布订阅思想很好的解耦
 
-redux 可以作为发布订阅模式的一个具体实现。redux 都会创建一个 store ，里面保存了状态信息，改变 store 的方法 dispatch ，以及订阅 store 变化的方法 subscribe 。
+   redux 可以作为发布订阅模式的一个具体实现。redux 都会创建一个 store ，里面保存了状态信息，改变 store 的方法 dispatch ，以及订阅 store 变化的方法 subscribe 。
 
-中间件思想
+3. 中间件思想可以增加状态库的功能
 
-redux 应用了前端领域为数不多的中间件 `compose` ，那么 redux 的中间件是用来做什么的？ 答案只有一个： 那就是**强化 dispatch** ， Redux 提供了中间件机制，使用者可以根据需要来强化 dispatch 函数，传统的 dispatch 是不支持异步的，但是可以针对 Redux 做强化，于是有了 `redux-thunk`，`redux-actions` 等中间件，包括 dvajs 中，也写了一个 redux 支持 promise 的中间件。
+redux 应用了前端领域为数不多的中间件 `compose` ，那么 redux 的中间件是用来做什么的？ 答案只有一个： 那就是**强化 dispatch** ， Redux 提供了中间件机制，使用者可以根据需要来强化 dispatch 函数，传统的 dispatch 是不支持异步的，但是可以针对 Redux 做强化，于是有了 `redux-thunk`，`redux-saga` 等中间件，包括 dvajs 中，也写了一个 redux 支持 promise 的中间件。
 
 一起来看一下 compose 是如何实现的：
 
@@ -3143,10 +3458,10 @@ const compose = (...funcs) => {
 
 - funcs 为中间件组成的数组，compose 通过数组的 reduce 方法，实现执行每一个中间件，强化 dispatch 。
 
-##### redux原理
+##### redux和react-redux总体执行流程
 
 1. Provider注入store
-   - React-Redux 是通过 context 上下文来保存传递 Store 的，但是上下文 value 保存的除了 Store 还有 subscription 。
+   - React-Redux 是通过 context 上下文来保存传递 Store 的，上下文 value 保存的除了 Store 还有 subscription 。
    - subscription 可以理解为订阅器，在 React-redux 中一方面用来订阅来自 state 变化，另一方面通知对应的组件更新。在 Provider 中的订阅器 subscription 为根订阅器，
    - 在 Provider 的 useEffect 中，进行真正的绑定订阅功能，其原理内部调用了 store.subscribe ，只有根订阅器才会触发store.subscribe，至于为什么，马上就会讲到。
 
@@ -3156,9 +3471,9 @@ const compose = (...funcs) => {
 
 #### recoil
 
-react官方退出的状态管理库，主打高性能以及可以利用react内部的调度，包括其承诺即将支持的并发模式。
+react官方推出的状态管理库，主打高性能以及可以利用react内部的调度，包括其承诺即将支持的并发模式。
 
-recoil的原理类mobx使用起来有点像observerble+computed模式。并且完全拥抱了函数式的hooks使用方式。
+recoil的原理类mobx，使用起来有点像observerble+computed模式。并且完全拥抱了函数式的hooks使用方式。
 
 #### mobx。
 
@@ -3167,7 +3482,7 @@ mobx的核心原理很简单，和Vuex的双向绑定类似，就是通过劫持
 mobx有三个核心概念：
 
 - `observable`: 通过 `observable(state)` 定义组件的状态，包装后的状态是一个可观察数据（Observable Data）。
-- `observer`: 通过 `observer(ReactComponent)` 定义组件，observer是mobx-react的方法。
+- `observer`: 通过 `observer(ReactComponent)` 定义组件，使得组件通知组件更新，observer是mobx-react的方法。
 - `action`: 通过 `action` 来修改状态。
 
 <img src="images/bVQtuq.jpeg" alt="图片描述" style="zoom:50%;" />
@@ -3180,12 +3495,12 @@ mobx有三个核心概念：
 
 1. 优势不同
    - mobx的优势来源于可观察数据，mobx通过拦截数据来观察数据的变化，所以在更细的粒度进行更新，因此不需要手动设置shouldComponentUpdate来提高应用性能。
-   - redux的优势来源于不可变数据，不可变数据的优势在于数据变化可预测、可回溯，后期维护更方便。所以react官方提出redux和immutable.js一起使用。
+   - redux的优势来源于不可变数据，不可变数据的优势在于数据变化可预测、可回溯，后期维护更方便。所以react官方推荐redux和immutable.js一起使用。
 2. 操作上
    - 由于mobx使用的是可变数据，所以mobx操作更简单，mobx库更小。
    - redux库基于不可变数据，使用是需要actionCreator创建action，然后dispatch action，经过中间件的处理，然后到reducer根据action类型更改数据。操作更复杂，流程更长，redux库更大，如果在加上immutale.js就更大了。但也是因为这个固定的流程和中间件机制使得redux可以实现更强大的功能。
 3. 适合的项目
-   - 没有那种技术是通吃的，技术的选型还是要基于业务场景和实际需求，如果redux纯函数带来的可预测性和维护上的收益足够大，那就使用redux，redux如果纯函数带来的收益不够大，还是的简单的业务逻辑需要啰嗦的流程代码，那使用mobx会更加方便。
+   - 没有那种技术是通吃的，技术的选型还是要基于业务场景和实际需求，如果redux纯函数带来的可预测性和维护上的收益足够大，那就使用redux，redux如果纯函数带来的收益不够大，并且简单的业务逻辑需要啰嗦的流程代码，那使用mobx会更加方便。
 
 #### context
 
@@ -3203,7 +3518,7 @@ Vuex：Vue自带的状态管理库。
 
 - State：存放数据的地方，相当于redux中reducer初始化时传入的state。
 - Mutations：相当于reducer，处理state的变化。
-- Actions：分装修改数据的逻辑调用commit提交修改。
+- Actions：封装修改数据的逻辑调用commit提交修改。
 - Store：和redux中的Store一样，Store底下挂载了上述的对象。
 - getters：用于将state中的数据加工。
 
@@ -3216,6 +3531,96 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 <img src="images/image-20220717155028795.png" alt="image-20220717155028795" style="zoom: 50%;" />
 
 ### 
+
+### 8. React源码流程
+
+#### 首次渲染
+
+1. 执行ReactDOM.ren
+
+### 9. 自定义hooks
+
+#### useClickOutSide
+
+传入要绑定的元素的ref，和回调函数。
+
+1. 当要绑定的元素还未初始化或者点击在元素内部时直接返回。
+
+2. 否则点击的位置就是元素以外的区域，调用回调函数
+
+```js
+function useClickOutside(ref: RefObject<HTMLElement>, handler: Function) {
+  useEffect(() => {
+    const listener = (event: MouseEvent) => {
+      if (!ref.current || ref.current.contains(event.target as HTMLElement)) {
+        return;
+      }
+      handler(event);
+    };
+    document.addEventListener("click", listener);
+    return () => {
+      document.removeEventListener("click", listener);
+    };
+  }, [ref, handler]);
+}
+```
+
+#### useMove
+
+传入需要移动的对象的ref
+
+1. 首相将该对象的position设置为absolute，使其脱离文档流，否则不能移动。
+2. 给元素绑定鼠标按下事件onmousedown，在按下事件回调中再给document绑定鼠标移动事件onmousemove获取鼠标移动的位置。最后给鼠标松开事件onmouseup回调中清除之前绑定的鼠标移动事情onmousemove和本身。
+3. 在useEffect的回调中清除事件onmousedown
+
+```js
+function useMove(ref) {
+  useEffect(() => {
+    let ele = ref.current;
+    ele.style.position = "absolute";
+    ele.onmousedown = function () {
+      document.onmousemove = function (e) {
+        let left = e.clientX - ele.offsetWidth / 2;
+        let top = e.clientY - ele.offsetHeight / 2;
+        ele.style.left = left + "px";
+        ele.style.top = top + "px";
+      };
+      ele.onmouseup = function () {
+        document.onmousemove = null;
+        ele.onmouseup = null;
+
+        console.log("d");
+      };
+    };
+    return () => {
+      ele.onmousedown = null;
+    };
+  });
+}
+```
+
+#### useDebounce
+
+传入需要防抖的值和延迟时间
+
+1. 设置定时器，延迟一会儿再Setstate修改防抖的值
+2. 给useEffect绑定依赖数组，从而每次传入的值更新后会自动修改防抖的值
+3. 给useEffect回调函数添加清除定时器任务
+
+```js
+function useDebounce(value: any, delay = 300) {
+  const [debounceValue, setDebounceValue] = useState(value);
+  useEffect(() => {
+    const handler = window.setTimeout(() => {
+      setDebounceValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debounceValue;
+}
+```
 
 
 
@@ -4066,7 +4471,7 @@ https://interview2.poetries.top/fe-blog-docs/blog-docs/react/-%E4%BB%8E%E9%9B%B6
 
 概念：react在客户端执行，消耗客户端的性能。客户端渲染
 
-## Webpack（*）
+## Webpack（**）
 
 ### 1.打包原理
 
@@ -4075,7 +4480,7 @@ Webpack 的运行流程是一个串行的过程，从启动到结束会依次执
 1. 初始化参数：从配置文件和 Shell 语句中读取与合并参数，得出最终的参数；
 2. 开始编译：用上一步得到的参数初始化 Compiler 对象，加载所有配置的插件，执行对象的 run 方法开始执行编译；
 3. 确定入口：根据配置中的 entry 找出所有的入口文件；
-4. 编译模块：从入口文件出发，调用所有配置的 Loader 对模块进行翻译，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理；
+4. 编译模块：从入口文件出发，调用所有配置的 Loader 对模块进行编译，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理；
 5. 完成模块编译：在经过第4步使用 Loader 翻译完所有模块后，得到了每个模块被翻译后的最终内容以及它们之间的依赖关系；
 6. 输出资源：根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 Chunk，再把每个 Chunk 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会；
 7. 输出完成：在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统。
@@ -4084,12 +4489,12 @@ Webpack 的运行流程是一个串行的过程，从启动到结束会依次执
 
 ### 2.功能
 
-webpack一种构建工具，构建就是做这件事情，把源代码转换成发布到线上的可执行 JavaScrip、CSS、HTML 代码，包括如下内容。
+webpack一种构建工具，构建就是把源代码转换成发布到线上的可执行 JavaScrip、CSS、HTML 代码，包括如下内容。
 
 - 代码转换：TypeScript 编译成 JavaScript、ES5转换ES6、JSX转换JavaScript、SCSS 编译成 CSS 等。
 - 代码校验：在代码被提交到仓库前需要校验代码是否符合规范，以及单元测试是否通过。
 - 代码分割：提取多个页面的公共代码、提取首屏不需要执行部分的代码让其异步加载。
-- 模块合并：在采用模块化的项目里会有很多个模块和文件，需要构建功能把模块分类合并成一个文件。
+- 模块合并：在采用模块化的项目里会有很多个模块和文件，需要把模块分类合并成一个文件，便于加载。
 - 文件优化：压缩 JavaScript、CSS、HTML 代码，压缩合并图片等。
 - 自动发布：更新完代码后，自动构建出线上发布代码并传输给发布系统。
 - Devserver服务器：监听本地源代码的变化，自动重新构建、刷新浏览器、模块热替换。
@@ -4126,18 +4531,52 @@ webpack一种构建工具，构建就是做这件事情，把源代码转换成�
 
 **Plugin：**
 
-1. [`BabelMinifyWebpackPlugin`](https://www.webpackjs.com/plugins/babel-minify-webpack-plugin)
+1. HTMLWebpackPlugin：生成html将js插入到head
 
-2. [`AggressiveSplittingPlugin`](https://www.webpackjs.com/plugins/aggressive-splitting-plugin)
-3. [`CommonsChunkPlugin`](https://www.webpackjs.com/plugins/commons-chunk-plugin)
-4. [`CompressionWebpackPlugin`](https://www.webpackjs.com/plugins/compression-webpack-plugin)
-5. mini-css-extract-plugin: 分离样式文件，CSS 提取为独立文件，支持按需加载 (替代extract-text-webpack-plugin)
-6. [`HotModuleReplacementPlugin`](https://www.webpackjs.com/plugins/hot-module-replacement-plugin)
-7. [`I18nWebpackPlugin`](https://www.webpackjs.com/plugins/i18n-webpack-plugin)
-8. [`SourceMapDevToolPlugin`](https://www.webpackjs.com/plugins/source-map-dev-tool-plugin)
-9. clean-webpack-plugin: 目录清理
-10. copy-webpack-plugin
-11. HotModuleReplacementPlugin
+2. CleanWebpackPlugin：清除上一次打包的文件
+
+3. MiniCSSPlugin：将css生成文件而非内联
+
+4. HotModuleReplacementPlugin：开启模块热替换
+
+5. ImageminPlugin：批量压缩图片
+
+6. PurifyCSSPlugin：删除css中未使用的选择器
+
+7. CssMinimizerPlugin压缩css
+
+8. UglifyJsPlugin：压缩js
+
+9. CompressionPlugin：启用gzip压缩
+
+10. SplitChunksPlugin：将文件提取打包成公共模块，例如抽取node_modules里的文件
+
+11. CopyWebpackPlugin：将已存在的单个文件或者整个目录复制到构建目录中（将别的文件拷贝到dist）。
+
+    https://www.jianshu.com/p/b7d5f254105f
+
+### 4. 打包优化
+
+1. 缩小文件搜索范围：
+
+   - 优化Loader配置，选择需要命中的文件夹
+
+   - 优化resolve.modules配置，直接指明要查找module的目录，无需再层层找，浪费时间。
+
+2. 使用DLLPlugin创建动态链接库，使得复用的模块只需要编译一次，例如react、react-dom等。
+3. 使用HapplyPack开启多个进程来处理任务，特别是费时间的Loader编译。
+4. 使用ParallelUglifyPlugin开启多进程并行压缩
+5. 开启自动刷新
+6. 开启模块热替换
+7. 区分环境：开发环境和生产环境配不同的配置，生产环境需要去除sourceMap、开启代码压缩、关闭自动更新和模块热替换等功能。
+8. 压缩代码：压缩JavaScript、css、ES6
+9. CDN加速：配置CDN服务的绝对路径、用文件哈希值作为静态资源文件名，防止被缓存，不同资源放到不同域名的CDN服务上，避免浏览器同域名并发限制。
+10. 使用TreeShaking剔除没有使用的死代码
+11. 提取公共代码，例如引入的loadsh、JQeury在多处被使用。
+12. 使用按需加载：比如按照React的路由分割代码为不同的bundle块，当访问到对应的路由才加载。
+13. 使用PrePack：在保持运行结果一直的情况下，将代码部分结果提前计算放到编译后的代码中，加快代码执行速度。
+14. 开启ScopeHoisting作用域提升，通过分析模块之间的依赖关系，尽可能将打散的模块合并到一个函数中去，较少代码体积的同时减少函数作用域，内存开销更小。
+15. 借助webpack可视化工具对输出分析，然后进一步优化。
 
 ## 设计模式
 
@@ -4291,7 +4730,20 @@ $.ajax({
 
 **项目中的例子：**浏览器中事件机制，redux也是利用观察者模式来完成数据的修改的，还有浏览器进程间的通信就有观察者模式。
 
+## 正则表达式
 
+```
+// ^：匹配输入字符串的开始位置，除非在方括号表达式中使用，当该符号在方括号表达式中使用时，表示不接受该方括号表达式中的字符集合。要匹配 ^ 字符本身，请使用 \^。
+  // \s：匹配任何空白字符，包括空格、制表符、换页符等等。等价于 [ \f\n\r\t\v]。注意 Unicode 正则表达式会匹配全角空格符。
+  // *：匹配前面的子表达式零次或多次。要匹配 * 字符，请使用 \*。
+  // [+-]：一个字符集合。匹配方括号中的"+""-"，正负号
+  // \d：等同[0-9]，匹配字符串中的一个数字
+  // +：匹配前面一个表达式 1 次或者多次
+
+  // match成功返回的是一个数组：伪数组
+  // matchStr = [ '-432', index: 0, input: '-432r 534 fdsr 34', groups: undefined ]
+  // 失败则返回：matchStr null
+```
 
 ## 数据结构
 
@@ -4555,7 +5007,7 @@ TCP 为全双工(Full-Duplex,  FDX)通信，双方可以进行双向通信，客
 
 ## 看过的书籍
 
-**JavaScript：**你不知道的JavaScript上中下、红宝书第三版、红宝书作者深入理解ES6、阮一峰ES6入门教程部分章节、JavaScript设计模式
+**JavaScript：**你不知道的JavaScript上中下、红宝书第三版、红宝书作者深入理解ES6、阮一峰ES6入门教程部分章节、JavaScript设计模式、面向对象的思考过程
 
 **CSS：**CSS权威指南上下册、深入理解CSS
 
