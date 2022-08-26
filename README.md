@@ -9,7 +9,7 @@
 3. grid：设置行列模板都为1fr。
 4. inline-block：子元素宽高33.33%。注意通过letter-spacing、word-spacing、font-size等消除边距，并且vertical-align对其top，否则上下有间隙。
 
-### 2.水平垂直居中（*\*）
+### 2.水平垂直居中（*\*\*）
 
 1. 知道内部元素与外部元素的宽高，通过设置计算设置margin即可。
 2. 父元素display:grid、align-items:center、justify-items:center。
@@ -21,7 +21,7 @@
 8. 父元素position：relative，子元素 position: absolute、left: 50%、 top: 50%、transfrom: translate(-50%, -50%)。
 9. 父元素position：relative，子元素position: absolute、top: 0、left: 0、right: 0、margin: auto。
 
-### 3. Flex布局(*)
+### 3. Flex布局(\**)
 
 **概念：**给某个元素设置了display：flex，那么该元素成了弹性容器，容器内的元素成了弹性子元素。容器内的元素在主轴上依次排列，如果不够排列就往副轴方向换行。弹性布局使得我们可以通过设置弹性容器来轻松操控容器内所有元素的布局，相比于浮动布局弹性布局更加精确，方便。
 
@@ -57,7 +57,7 @@ order:5
 **容器属性：**
 
 ```css
-grid-template-rows:100px/50%/1fr repeat(3,100px/1fr 2em)
+grid-template-rows/columns:100px/50%/1fr repeat(3,100px/1fr 2em)
 grid-template-areas:"header hedar hedar"
                     "content content content"
                     "footer footer fotter"
@@ -429,7 +429,7 @@ to{transform:rotate(360deg)}
 }
 ```
 
-### 17 三栏布局(*)
+### 17 三栏布局(\**)
 
 #### 1.浮动布局
 
@@ -628,7 +628,7 @@ main元素可以提前，因为绝对定位会脱离文档流。
 
 8.双飞翼布局
 
-利用浮动、正边距、负边距来实现三栏自适应，且第一个加载main元素，和圣杯布局的区别在于给main元素加了一个包裹元素，通过包裹元素的正边距压缩空间给左右两侧的元素。
+利用浮动、正边距、负边距来实现三栏自适应，且第一个加载main元素，和圣杯布局的区别在于给main元素加了一个包裹元素，通过给main设置正外边距压缩空间给左右两侧的元素。
 
 ```html
     <div class="container">
@@ -665,7 +665,7 @@ main元素可以提前，因为绝对定位会脱离文档流。
       }
 ```
 
-### 18. 什么是BFC（*）
+### 18. 什么是BFC（\**）
 
 BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界，
 
@@ -684,8 +684,8 @@ BFC全称 Block Formatting Context 即`块级格式上下文`，简单的说，B
 - BFC是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
 - 计算BFC的高度时，浮动子元素也参与计算（即内部有浮动元素时也不会发生高度塌陷）
 - BFC的中的区域不会与别的float的元素区域重叠
-- BFC内部的元素会在垂直方向上放置
 - BFC内部两个相邻元素的margin会发生重叠
+- BFC内部的元素会在垂直方向上放置
 
 ####  BFC的应用场景
 
@@ -842,9 +842,147 @@ https://www.jianshu.com/p/f92802118178
 
 一般结合媒体查询和特性查询来实现多端响应式布局和浏览器渐进增强，媒体查询注重在查询支持的媒体，在响应式布局中应用多，因为响应式布局目的是响应不同的媒体。而特性查询注重在查询支持的css特性，在渐进增强中应用多，因为渐进增强目的是根据不同的浏览器版本支持的CSS特性应用不同的样式。
 
+### 25. CSS可继承属性
 
+字体	font、font-family、font-weight、font-size、font-style…
+文本	text-indent、text-align、line-height、word-spacing、letter-spacing、text-transform、direction、color
+元素可见性	visibility
+表格布局	caption-side、border-collapse、border-spacing、empty-cells、table-layout
+列表	list-style-type、list-style-image、list-style-position、list-style
+生成内容	quotes
+光标	cursor
+页面样式	page、page-break-inside、windows、orphans
+声音样式	speak、speak-punctuation、speak-numeral、speak-header、speech-rate、volume、voice-family、pitch、pitch-range、stress、richness、azimuth、elevation
 
+### 26. 上下固定，中间自适应，三栏布局
 
+1.position
+
+```css
+.wrapper{
+position:relative;
+width:100px;
+height:800px;
+}
+
+.top{
+position:absolute;
+top:0;
+height:100px;
+width:100px;
+background-color:yellow;}
+
+.center{
+position:absolute;
+top:100px;
+bottom:100px;
+margin:auto;
+width:100px;
+background-color:pink}
+
+.bottom{
+position:absolute;
+height:100px;
+bottom:0;
+width:100px;
+background-color:red}
+```
+
+2.flex
+
+```css
+.wrapper{
+width:100px;
+height:800px;
+display:flex;
+flex:1 1 100px;
+flex-wrap:wrap;
+}
+
+.top{
+width:100%;
+height:100px;
+background-color:yellow;}
+
+.center{
+width:100%;
+height:calc(100% - 200px);
+background-color:pink}
+
+.bottom{
+width:100%;
+height:100px;
+background-color:red}
+
+```
+
+3.gird
+
+```css
+.wrapper{
+width:100px;
+height:800px;
+display:grid;
+grid-template-rows:100px 1fr 100px;
+gird-template-columns:1fr;
+}
+
+.top{
+width:100%;
+background-color:yellow;}
+
+.center{
+width:100%;
+background-color:pink}
+
+.bottom{
+width:100%;
+background-color:red}
+```
+
+4.普通布局+calc（给三个元素加上浮动也一样）
+
+```css
+.wrapper{
+width:100px;
+height:800px;
+}
+
+.top{
+
+height:100px;
+width:100px;
+background-color:yellow;}
+
+.center{
+width:100px;
+height:calc(100% - 200px);
+background-color:pink}
+
+.bottom{
+height:100px;
+width:100px;
+background-color:red}
+```
+
+### 27. 脱离文档流和恢复文档流的方法
+
+一、文档流
+1. 什么是文档流？
+2. 什么是脱离文档流
+二、怎么脱离文档流
+1. float
+2. position
+a. position：absolute
+b. position：fixed
+c. position：relative
+三、怎么恢复文档流
+1. 对于float 的元素，对父级元素可以使用overflow：hidden
+2. clear：both
+如何解决浮动布局导致的父元素高度塌陷问题？
+————————————————
+版权声明：本文为CSDN博主「一纸荒凉 * Armani」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/weixin_43958049/article/details/99428703
 
 ## HTML
 
@@ -992,11 +1130,11 @@ placeholder   autofocus
 4. useEffect给组件添加定时器，根据传入的轮播时间切换下标。
 5. 然后就是给bullet和左右切换按钮添加点击事件，点击切换下标出发state改变，然后重新渲染展示的图片，bullet也根据下标修改class，css配合修改激活颜色；
 
-### 2.闭包（**）
+### 2.闭包（*\*\*）
 
 闭包的概念：闭包指的是能够读取其他函数作用域的函数。
 
-如果要显示的表现闭包，那就是在一个函数内部定义另一个函数。那么根据词法作用域，内部的函数是可以访问外部函数的作用域的。然后以某种方式在外部函数外部获得这个内部函数的引用（通过返回值或者设置为外部对象的属性，或者将函数作为外部的函数的参数）。那么当整个外部函数执行完之后，调用栈的指针就会下移一位，释放外部函数的执行上下文。但是此时内部的函数引用了外部作用域中的变量，并且内部的函数又被别的执行上下文引用。此时虽然调用栈释放了外部函数的执行上下文，但是会在堆内存中开辟一块空间，用来存储被内部函数引用的变量，这就是闭包。
+如果要显示的表现闭包，那就是在一个函数内部定义另一个函数。那么根据词法作用域，内部的函数是可以访问外部函数的作用域的。然后以某种方式在外部函数的外部获得这个内部函数的引用（通过返回值或者设置为外部对象的属性，或者将函数作为外部的函数的参数）。那么当整个外部函数执行完之后，调用栈的指针就会下移一位，释放外部函数的执行上下文。但是此时内部的函数引用了外部函数作用域中的变量，并且内部的函数又被别的执行上下文引用。此时虽然调用栈释放了外部函数的执行上下文，但是会在堆内存中开辟一块空间，用来存储被内部函数引用的变量，这就是闭包。
 
 闭包的特性：
 
@@ -1017,14 +1155,14 @@ placeholder   autofocus
 
 闭包的应用场景：
 
-1. 创建私有变量
+1. 创建私有变量，函数防抖和函数节流，很多返回值是对象或函数的函数，都是利用闭包来创建私有变量和缓存数据。
 2. JavaScript的模块机制就是利用闭包的原理
 3. 回调函数
-4. 函数防抖和函数节流，很多返回对象或函数量的函数，都是利用闭包来创建私有变量和缓存数据。
+4. React种判断hooks是否是在函数内调用的，如果是在函数组件内调用，hooks的内部可以通过闭包来访问函数组件外部是否赋值了currentDispatcher.current，如果是函数组件外部调用，则currentDispatcher.current为空。
 
 ![image-20220613102127638](images/image-20220613102127638.png)
 
-### 3.原型链（*）
+### 3.原型链（\*\*）
 
 原型链的由来：JavaScript中是没有类的概念的。在面向类的语言中，实例化一个对象，就是将类的属性和方法复制到实例化对象上，而JavaScript中是没有类似的复制机制的。不能创建一个类的多个实例，只能创建多个对象，而多个对象的内部链接[[prototype]]指向同一个对象，也就是说这多个对象通过这个内部链接复用了指向对象的某些方法和属性，而不是复制这些方法和属性。那么这个指向关系就是原型链。
 
@@ -1032,26 +1170,30 @@ placeholder   autofocus
 
 JavaScript的继承是基于原型链的，也就是将一个对象A的内部链接[[prototype]]指向另外一个对象B的prototype对象上，那么A就继承了B的prototype上的属性和方法，这种继承是借用，而不是复制。
 
-在JavaScript，有两个元老级别的对象，函数Object和函数Function。新的对象的内部链接[[prototype]]都指向Object的prototype对象，而Object的内部链接[[prototype]]只能指空。新的函数的内部链接[[prototype]]都指向Function的prototype对象，而Function的内部链接[[prototype]]指向Object的prototype对象。
+在JavaScript，有两个元老级别的对象，函数Object和函数Function。新的对象的内部链接[[prototype]]都指向Object的prototype对象，而Object的内部链接[[prototype]]只能指空。新的函数的内部链接[[prototype]]都指向Function的prototype对象，而Function的内部链接[[prototype]]指向自己的的prototype对象。Function.prototype的内部链接[[prototype]]指向Object.prototype
 
 也就是说，从原型链上寻找，所有的函数的内部链接[[prototype]]最终会指向Function的prototype对象，所有对象的内部链接最终会指向Object的prototype对象。
 
-### 4.判断数据类型的方法（*）
+### 4.判断数据类型的方法（\*\*）
 
 1. 基本数据类型用typeof，typeof不能判断引用数据类型和null。typeof的值（number、string、function、object、undefined、boolean）
 2. 引用数据类型用instanceof（instanceof的原理主要是看两个对象的内部链接prototype的指向）。
 3. constructor（原理还是靠原型链，通过原型链找到了原型对象，然后调用原型对象的constructor指向来判断)。
 4. Object.prototype.toString().call(obj)，通过该方法得到的字符串格式为[object Number]。
 
-### 5.Object的toString和构造函数的toString的区别
+### 5.Object的toString和构造函数的toString以及内置对象的tostring区别
 
 Object的toString得到的字符串是[object Number]，常用于判断类型。
 
-而Function、Number、String等构造函数的toString重写了Object的原型上的toString，得到的是函数的字符串形式"function Number() { [native code] }"；
+而Array、Function、Number、String等构造函数的toString重写了Object的原型上的toString：
 
-### 6.this的指向问题（*\*\*\*）
+1. Function得到的是函数的字符串形式"function Number() { [native code] }"，也就是所有的函数都是这个结果。
+2. Array.prototype.toString返回’1,2,3‘。
+3. Number.prototype直接返回string类型
 
-JS中的this可以理解为执行环境或者调用对象。从物理的角度来看，在js的调用栈中的每个函数的执行上下文都有四个对象，变量环境、词法环境、外部环境、还有this对象，this就相当于这个函数的调用对象或者执行环境。
+### 6.this的指向问题（*\*\*\*\*）
+
+JS中的this可以理解为执行环境或者调用对象。从底层实现的角度来看，在js的调用栈中的每个函数的执行上下文都有四个对象，变量环境、词法环境、外部环境、还有this对象，this就相当于这个函数的调用对象或者执行环境。
 
 <img src="images/image-20220613102511556.png" alt="image-20220613102511556" style="zoom:50%;" />
 
@@ -1065,7 +1207,7 @@ JS中的this可以理解为执行环境或者调用对象。从物理的角度�
 
 4. **new绑定**：用new关键字调用函数，会执行如下几个步骤：
 
-   1.创建一个全新的对象。
+   1.创建一个全新的对象，对象。
 
    2.将这个对象的内部链接[[prototype]]指向被调用函数的prototype属性。
 
@@ -1093,7 +1235,9 @@ function _new(fn, ...args) {
 1. 箭头函数的this是静态的，由词法作用域决定，所以箭头函数的this是根据词法作用域找最近的调用对象，也就是箭头函数外第一层函数的this对象。
 2. 因为箭头函数的this是基于词法作用域的，所以不可以修改。从而函数的四种绑定对于this都不管用箭头函数不可以用bind、apply、call调用，不能使用new调用。
 3. 箭头函数没有arguments对象。
-5. 箭头函数不能作为生成器函数使用yield关键字。
+4. 剪头函数没有原型prototype，复发访问原型链
+5. 箭头函数是匿名函数，没有自己的名字，只能赋值给一个变量。
+6. 箭头函数不能作为生成器函数使用yield关键字。
 
 ### 8. 堆内存和栈内存
 
@@ -1327,9 +1471,9 @@ https://interview2.poetries.top/fe-base-docs/browser/part2/lesson09.html#javascr
 
 2.双循环：外层i遍历前一个元素，内层j遍历i后面的元素。如果相同则用arr.splice(j,1)去除后面的元素，此时后面的元素往前了，j--。
 
-3.indexOf：用一个res=[]，遍历数组arr同时res.indexOf(arr[i])，如果!==-1则放入res。
+3.indexOf：用一个res=[]，遍历数组arr同时res.indexOf(arr[i])，如果===-1则放入res。
 
-4.sort：对数组arr排序，然后从下标1开始遍历，如果i-1===i则用splice(i-1,1)去除前面的元素。
+4.sort：对数组arr排序，然后从下标1开始遍历，如果i-1===i则用splice(i-1,1)去除前面的元素，此时后面的元素往前的，i--。
 
 5.利用对象当map：对象obj={}用来当map，利用每个元素的类型和toString组成的字符串作为key，值则是true表示该元素存在。
 
@@ -1343,9 +1487,9 @@ https://interview2.poetries.top/fe-base-docs/browser/part2/lesson09.html#javascr
 
 9.利用reduce：pre存结果，return pre.includes(cur)?pre:[...pre,cur]来决定每次返回的结果。![image-20220703164220102](images/image-20220703164220102.png)
 
-### 13. JS数据类型（*）
+### 13. JS数据类型（\*\*\*）
 
-基本数据类型：string、number、bool、null、undefine、Symbol(ES6)。
+基本数据类型：string、number、bool、null、undefine、Symbol(ES6)、BigInt。
 
 引用数据类型：Object、Function、Array、Date、RegExp、基本类型的包装类型（Bool、String、Number）、Proxy、Reflect、Map、WeakMap、Set、WeakSet、Error。
 
@@ -1404,7 +1548,7 @@ ES6的作用域：
 
 #### **改变数组的方法**
 
-一般对操作数组的方法会改变数组
+一般操作数组的方法会改变数组
 
 1. splice
 2. reverse
@@ -1440,28 +1584,30 @@ ES6的作用域：
 3. find
 4. findIndex
 
-对数组进行操作
+对数组进行别的操作
 
 1. slice
 2. concat
 3. join
 4. flat
 
-### 19. ES6新特性（*\*）
+### 19. ES6新特性（*\*\*）
 
 1. 块级作用域let和const：
 2. 模板字面量：模板字面量最大的威力就是标签模板，标签模板可以对模板中的字符串和变量进行处理返回新的字符串。例如styled-components就是利用标签模板实现在CSS代码中插入props变量的。
 3. 函数：形参默认值、展开运算符、name属性、块级函数、箭头函数。
-4. 对象：属性值简写、方法简写、Object.is()、Object.assign()、super关键字（相当于Object.getPrototypeOf(this)。
-5. 解构：数组解构、对象解构。
-6. Symbol原始类型。
-7. Set、Map、WeakSet、WeakMap集合。
-8. 迭代器、生成器
-9. 薪资class关键字创建类、继承：ES5中的继承是先创建子类然后调用父类构造器，ES6则是先创建父类this值，然后子类的构造函数再继承this对其进行修改。
-10. 数组：Array.of、Array.from、find、findIndex、fill。
-11. Promise、async。
-12. Proxy、Reflection：Reflection的主要作用是将分散在Object、Function、或全局函数中的方法（apply、delete、get、set）整合一起，方便统一管理原生API，其次是配合Proxy对代理对象做一些操作，Reflect的返回值可以代替try catch。
-13. ES6模块。
+4. 解构：数组解构、对象解构。
+5. 数组：Array.of、Array.from、find、findIndex、fill。
+
+
+
+1. 对象：属性值简写、方法简写、Object.is()、Object.assign()、super关键字（相当于Object.getPrototypeOf(this)。
+2. Symbol原始类型、BigInt内置对象（它提供了一种方法来表示大于 `2^53 - 1` 的整数。这原本是 Javascript 中可以用 [`Number`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number) 表示的最大数字。**`BigInt`** 可以表示任意大的整数。）
+3. Set、Map、WeakSet、WeakMap集合。
+4. 迭代器、生成器、Promise、async。
+5. Proxy、Reflection：Reflection的主要作用是将分散在Object、Function、或全局函数中的方法（apply、delete、get、set）整合一起，方便统一管理原生API，其次是配合Proxy对代理对象做一些操作，Reflect的返回值可以代替try catch。
+6. 新增class关键字创建类、继承：ES5中的继承是先创建子类然后调用父类构造器，ES6则是先创建父类this值，然后子类的构造函数再继承this对其进行修改。
+7. ES6模块。
 
 ### 20. JS和ES
 
@@ -1548,13 +1694,13 @@ div2.dispatchEvent(ev);
 
 1. JSON.parse(JSON.stringify(obj));
    - 无法实现对函数、RegExp等特殊对象的拷贝
-   - 会抛弃对象的constructor，所有构造函数指向Object
+   - 会抛弃对象的constructor，所有constructor指向Object
    - 如果有循环引用会出错
 2. 递归，后续遍历实现一个深拷贝。
    - 用map解决循环引用的问题
    - 用instancesof或Object.prototype.toString.call(obj)来分辨引用类型
    - 用克隆对象的构造器来得到一个新的初始对象保证不丢失原型
-   - 对于Map、Set、Array、Object等可以递归遍历的类下则递归处理
+   - 对于Map、Set、Array、Object等可以递归遍历的类，则递归处理
      - Map：`cloneTarget.set(deepClone(key, map), deepClone(item, map));`
      - Set：` cloneTarget.add(deepClone(item, map));`
      - Array、Object：`cloneTarget[prop] = deepClone(target[prop], map);`
@@ -1867,6 +2013,35 @@ Babel 是一个 JavaScript 编译器。他把最新版的 javascript 编译成�
 3. 因为key是弱引用，所以key是不可枚举的
 
 应用：检测循环引用
+
+### 30 IIFE(Immediately-Invoked Function Expression)立即执行的函数表达式
+
+IIFE不是函数，而是函数表达式，表达式有返回值。
+
+1. (function a(){})：用（）包裹一个函数声明，整个代码就成了表达式，因为JS引擎发现function关键字后面以括号结尾，所以代码被当做表达式而不是函数定义语句，表达式得到的是函数的引用。
+
+2. function a(){}()：给函数声明的后面添加一对括号，JS引擎将整个代码当做表达式来执行，首先函数声明被当做表达式，返回值为函数，然后后面的括号则执行整个函数。
+
+   https://segmentfault.com/a/1190000003902899
+
+#### 应用：
+
+- 一是不必为函数命名，避免了污染全局变量；
+- 二是IIFE内部形成了一个单独的作用域，可以封装一些外部无法读取的私有变量。
+
+### 31 展开运算符用途
+
+1. 展开可迭代对象，例如数组、对象、set的展开。
+   - 复制数组、对象
+   - 唯一数组，用数组生成set再展开得到唯一数组
+   - 串联数组，
+   - 展开数组为所有参数
+   - 数组切片
+   - 代替Object.assign合并对象
+   - 将字符串拆分成字符
+2. 获取函数的剩余参数、所有参数，代替augments类数组对象，ES5需要调用数组的方法来处理augment对象获取剩余参数或者所有参数。
+
+https://blog.csdn.net/qq_43258252/article/details/103007068
 
 ## 浏览器
 
@@ -2370,8 +2545,9 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 
 1. 渲染事件（如解析 DOM、计算布局、计算样式）；
 2. 用户交互事件（如鼠标点击、滚动页面、放大缩小等）；
-3. JavaScript 脚本执行事件；
-4. 网络请求完成、文件读写完成事件。
+3. Script 脚本执行事件；
+4. MessageChannel
+5. 网络请求完成、I\O完成事件。
 
 <img src="https://s.poetries.work/gitee/2019/11/41.png" alt="img" style="zoom:50%;" />
 
@@ -2385,11 +2561,11 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 4. async、await
 5. node 的process.nextTick（**`process.nextTick`指定的异步任务总是发生在所有异步任务之前**）
 
-### 9.promise（***\*\*）
+### 9.promise（***\*\*\*）
 
 ![image-20220614162950763](images/image-20220614162950763.png)
 
-异步代码的执行流程和同步代码的流程完全不一样，不易于理解和编写，所以最佳的异步编程应该是以同步代码的形式来写异步执行的代码。
+在没有Promise机制之前都是使用异步回调来实现异步编程，Promise主要是为了解决异步回调的一些弊端提出的。
 
 **异步回调的缺点：**
 
@@ -2398,7 +2574,7 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 
 3. 回调模式还有一个致命的问题，就是不可信任。如果回调没有按照预期的执行（不执行回调，执行多次回调），那么整个执行流程就会乱套。
 
-4. 回调模式的任务编排不方便，需要自己来实现Promise.all，Promise.face这种任务流程。
+4. 回调模式的任务编排不方便，对于多个异步任务取最先完成的或者多个任务等所有完成算完成，这种复杂任务类型得自己编写任务函数，或者调用第三方库。
 
 ![image-20220614165405360](images/image-20220614165405360.png)
 
@@ -2410,9 +2586,9 @@ IO线程：负责接受其他进程传来的消息与渲染主线程通信，产
 
 **Promise的优势：**
 
-1. promise的回调函数可以延时绑定，降低代码耦合性降低，并且编排回调任务更加灵活。
-2. 回调函数的返回值能够穿透到最外层，使得函数不再嵌套，并且可以链式调用。
-3. promise抛出的异常，可以向后传递直到被解决为止，这样不需要在每个promise对象中捕获异常。
+1. promise的回调函数可以延时绑定，降低代码耦合性降低，并且延时绑定使得编排回调任务更加灵活。
+2. 回调函数的返回值能够穿透到最外层，使得函数不再嵌套，并且可以链式调用，理清了代码逻辑。
+3. promise抛出的异常，可以向后传递直到被解决为止，这样不需要在每个promise对象中捕获并处理异常。
 4. promise遵循promise规范，每个任务只有三种状态，pending、resolved、rejected。promise根据状态决定是否执行then中注册的回调函数。回调函数的执行与否，执行次数都是可控的，Promise是可信任的。
 
 **Promise方法**
@@ -2441,7 +2617,7 @@ async函数：借助promise和generator可以以同步的方式写异步代码�
 
 async原理：
 
-当执行一个async函数时会创建一个协程，js会自动调用生成器的next函数切换到创建的协程中，然后执行await关键字后的表达式。表达式的结果要么返回promise对象，要么被Promise.resolve包装成promise对象。然后给这个promise添加微任务到微任务队列，然后会返回这个Promise到父协程。也就是执行脚本上的代码，当代码执行完毕后，父协程即将执行结束，准备关闭全局执行上下文，清空调用栈之前，会进入微任务的检查点，检查微任务队列是否为空，此时取出之前的添加微任务执行，在这个微任务中会将promise对象resolve传来的值传递给生成器的next函数，从而又切换到生成器创建的子协程中然后执行子协程中的代码，这个过程可能还会产生微任务，然后继续执行之前的流程。
+当执行一个async函数时会创建一个协程，js会自动调用生成器的next函数切换到创建的协程中，然后执行await关键字后的表达式。表达式的结果要么返回promise对象，要么被Promise.resolve包装成promise对象。然后给这个promise添加微任务到微任务队列，然后会返回这个Promise到父协程。开始执行脚本上的代码，当代码执行完毕后，script脚本的宏任务即将执行结束，准备关闭全局执行上下文，清空调用栈之前，会进入微任务的检查点，检查微任务队列是否为空，此时取出之前的添加微任务执行，在这个微任务中会将promise对象resolve传来的值传递给生成器的next函数，从而又切换到生成器创建的子协程中然后执行子协程中的代码，这个过程可能还会产生微任务，然后继续执行之前的流程。
 
 ```js
 async function foo() {
@@ -2471,7 +2647,7 @@ https://interview2.poetries.top/docs/advance.html#%E4%B8%89%E3%80%81%E6%80%A7%E8
 
 1.用户输入URL并回车。
 
-2.浏览器检查本地是否缓存了该请求。
+2.浏览器检查本地是否缓存了该请求。0与黑科技8
 
 - **强缓存，缓存一些不怎么改变的资源，例如LOGO图片等资源。**
 - **协商缓存，缓存一些改变稍微频繁一点的资源，例如代码等。**
@@ -3536,7 +3712,22 @@ Vuex里面的dispatch只负责将动作转发到action，而commit负责最后�
 
 #### 首次渲染
 
-1. 执行ReactDOM.ren
+1. 执行ReactDOM.render(createElement(type, props, ...children),  container)，根据创建的JSX对象类创建wip Fiber， 同时将wip标记为下一个工作单元。
+
+2. 执行workLoop函数，首先依次深度遍历diff差异，将更新任务收集到各个wip 的effectList中。待遍历到树底部则开始向上返回，同时diff兄弟节点差异。
+
+   待回到树顶部则开始执行commit流程。
+
+3. 执行commit流程，commit阶段遍历effectList链表，执行链表中的更新任务
+
+
+
+1. 执行ReactDOM.render(createElement(type, props, ...children),  container)
+2. 
+
+#### 更新阶段
+
+1. 执行setState（action），将更新函数action传入更新队列，同时将下一个工作单元nextUnitOfWork改为当前wip。（初次渲染执行组件时会调用useState获取旧的action队列合并到新的action队列，然后传入memorized state一次调用队列中的更新函数action，获取最新的状态。然后返回最新的状态和setState函数）
 
 ### 9. 自定义hooks
 
@@ -3622,7 +3813,9 @@ function useDebounce(value: any, delay = 300) {
 }
 ```
 
+### API总结
 
+https://mp.weixin.qq.com/s/JdGrx3kSde5kRg5SXhDNqw
 
 ## Vue
 
